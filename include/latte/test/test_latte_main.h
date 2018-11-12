@@ -1,4 +1,4 @@
-// The main caffe test code. Your test cpp code should include this hpp
+// The main latte test code. Your test cpp code should include this hpp
 // to allow a main function to be compiled into the binary.
 #ifndef LATTE_TEST_TEST_LATTE_MAIN_H_
 #define LATTE_TEST_TEST_LATTE_MAIN_H_
@@ -24,7 +24,7 @@ using std::endl;
 
 int main(int argc, char** argv);
 
-// namespace caffe {
+// namespace latte {
 
 // template <typename TypeParam>
 // class MultiDeviceTest : public ::testing::Test {
@@ -32,7 +32,7 @@ int main(int argc, char** argv);
 //   typedef typename TypeParam::Dtype Dtype;
 //  protected:
 //   MultiDeviceTest() {
-//     Caffe::set_mode(TypeParam::device);
+//     Latte::set_mode(TypeParam::device);
 //   }
 //   virtual ~MultiDeviceTest() {}
 // };
@@ -42,7 +42,7 @@ int main(int argc, char** argv);
 // template <typename TypeParam>
 // struct CPUDevice {
 //   typedef TypeParam Dtype;
-//   static const Caffe::Brew device = Caffe::CPU;
+//   static const Latte::Brew device = Latte::CPU;
 // };
 
 // template <typename Dtype>
@@ -59,7 +59,7 @@ int main(int argc, char** argv);
 // template <typename TypeParam>
 // struct GPUDevice {
 //   typedef TypeParam Dtype;
-//   static const Caffe::Brew device = Caffe::GPU;
+//   static const Latte::Brew device = Latte::GPU;
 // };
 
 // template <typename Dtype>
@@ -72,6 +72,6 @@ int main(int argc, char** argv);
 
 // #endif
 
-// }  // namespace caffe
+// }  // namespace latte
 
-#endif  // CAFFE_TEST_TEST_CAFFE_MAIN_HPP_
+#endif  // LATTE_TEST_TEST_LATTE_MAIN_H_

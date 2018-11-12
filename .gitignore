@@ -53,7 +53,7 @@
 # OSX dir files
 .DS_Store
 
-## Caffe
+## Latte
 
 # User's build configuration
 Makefile.config
@@ -70,6 +70,7 @@ models/*
 *.binaryproto
 *leveldb
 *lmdb
+*.lattemodel
 
 # build, distribute, and bins (+ python proto bindings)
 build
@@ -78,7 +79,7 @@ build
 distribute/*
 *.testbin
 *.bin
-python/caffe/proto/
+python/latte/proto/
 cmake_build
 .cmake_build
 

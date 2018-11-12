@@ -5,7 +5,7 @@ file(GLOB_RECURSE srcs ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 foreach(source ${srcs})
   get_filename_component(name ${source} NAME_WE)
 
-  # caffe target already exits
+  # latte target already exits
   if(name MATCHES "latte")
     set(name ${name}.bin)
   endif()

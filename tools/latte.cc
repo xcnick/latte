@@ -79,8 +79,8 @@ static void get_gpus(std::vector<int>* gpus) {
   }
 }
 
-// caffe commands to call by
-//     caffe <command> <args>
+// latte commands to call by
+//     latte <command> <args>
 //
 // To add a command, define a function "int command()" and register it with
 // RegisterBrewFunction(action);

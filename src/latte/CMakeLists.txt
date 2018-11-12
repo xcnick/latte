@@ -32,8 +32,8 @@ if(Latte_COMPILE_OPTIONS)
   target_compile_options(latte ${Latte_COMPILE_OPTIONS})
 endif()
 set_target_properties(latte PROPERTIES
-    VERSION   ${CAFFE_TARGET_VERSION}
-    SOVERSION ${CAFFE_TARGET_SOVERSION}
+    VERSION   ${LATTE_TARGET_VERSION}
+    SOVERSION ${LATTE_TARGET_SOVERSION}
     )
 
 # ---[ Tests

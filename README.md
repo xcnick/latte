@@ -1,4 +1,5 @@
-#Latte
+# Latte
+
 [![Build Status](https://travis-ci.org/xcnick/latte.svg?branch=master)](https://travis-ci.org/xcnick/latte)
 A mini deeplearning framework inspired by [Caffe](https://github.com/BVLC/caffe)
 

@@ -305,8 +305,8 @@ endfunction()
 ################################################################################################
 # Helper function to parse current linker libs into link directories, libflags and osx frameworks
 # Usage:
-#   latte_parse_linker_libs(<Caffe_LINKER_LIBS_var> <directories_var> <libflags_var> <frameworks_var>)
-function(latte_parse_linker_libs Caffe_LINKER_LIBS_variable folders_var flags_var frameworks_var)
+#   latte_parse_linker_libs(<Latte_LINKER_LIBS_var> <directories_var> <libflags_var> <frameworks_var>)
+function(latte_parse_linker_libs Latte_LINKER_LIBS_variable folders_var flags_var frameworks_var)
 
   set(__unspec "")
   set(__debug "")
@@ -315,7 +315,7 @@ function(latte_parse_linker_libs Caffe_LINKER_LIBS_variable folders_var flags_va
   set(__varname "__unspec")
 
   # split libs into debug, optimized, unspecified and frameworks
-  foreach(list_elem ${${Caffe_LINKER_LIBS_variable}})
+  foreach(list_elem ${${Latte_LINKER_LIBS_variable}})
     if(list_elem STREQUAL "debug")
       set(__varname "__debug")
     elseif(list_elem STREQUAL "optimized")

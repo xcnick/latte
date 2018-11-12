@@ -1,14 +1,14 @@
 #include "latte/latte.h"
 #include "latte/test/test_latte_main.h"
 
-namespace caffe {
+namespace latte {
 #ifndef CPU_ONLY
   cudaDeviceProp LATTE_TEST_CUDA_PROP;
 #endif
 }
 
 #ifndef CPU_ONLY
-using caffe::LATTE_TEST_CUDA_PROP;
+using latte::LATTE_TEST_CUDA_PROP;
 #endif
 
 int main(int argc, char** argv) {

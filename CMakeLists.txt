@@ -68,7 +68,7 @@ configure_file(cmake/Templates/latte_config.h.in "${PROJECT_BINARY_DIR}/latte_co
 set(Latte_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(Latte_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
-include_directories(${Caffe_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRDPARTY_DIR})
+include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRDPARTY_DIR})
 
 # ---[ Includes & defines for CUDA
 
