@@ -3,7 +3,7 @@
 #  cmake -DBUILD_only_tests="common,net,blob,im2col_kernel"
 set(BUILD_only_tests "" CACHE STRING "Blank or comma-separated list of test files to build without 'test_' prefix and extension")
 latte_leave_only_selected_tests(test_srcs ${BUILD_only_tests})
-#latte_leave_only_selected_tests(test_cuda ${BUILD_only_tests})
+latte_leave_only_selected_tests(test_cuda ${BUILD_only_tests})
 
 # For 'make runtest' target we don't need to embed test data paths to
 # source files, because test target is executed in source directory
@@ -18,12 +18,12 @@ latte_leave_only_selected_tests(test_srcs ${BUILD_only_tests})
 set(the_target test.testbin)
 set(test_args --gtest_shuffle)
 
-# if(HAVE_CUDA)
-#   latte_cuda_compile(test_cuda_objs ${test_cuda})
-#   list(APPEND test_srcs ${test_cuda_objs} ${test_cuda})
-# else()
-list(APPEND test_args --gtest_filter="-*GPU*")
-#endif()
+if(HAVE_CUDA)
+  latte_cuda_compile(test_cuda_objs ${test_cuda})
+  list(APPEND test_srcs ${test_cuda_objs} ${test_cuda})
+else()
+  list(APPEND test_args --gtest_filter="-*GPU*")
+endif()
 
 # ---[ Adding test target
 add_executable(${the_target} EXCLUDE_FROM_ALL ${test_srcs})

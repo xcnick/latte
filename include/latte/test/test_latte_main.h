@@ -15,63 +15,60 @@ using std::cout;
 using std::endl;
 
 #ifdef CMAKE_BUILD
-  #include "latte_config.h"
+#include "latte_config.h"
 #else
-  #define CUDA_TEST_DEVICE -1
-  #define EXAMPLES_SOURCE_DIR "examples/"
-  #define ABS_TEST_DATA_DIR "src/latte/test/test_data"
+#define CUDA_TEST_DEVICE -1
+#define EXAMPLES_SOURCE_DIR "examples/"
+#define ABS_TEST_DATA_DIR "src/latte/test/test_data"
 #endif
 
-int main(int argc, char** argv);
+int main(int argc, char **argv);
 
-// namespace latte {
+namespace latte {
 
-// template <typename TypeParam>
-// class MultiDeviceTest : public ::testing::Test {
-//  public:
-//   typedef typename TypeParam::Dtype Dtype;
-//  protected:
-//   MultiDeviceTest() {
-//     Latte::set_mode(TypeParam::device);
-//   }
-//   virtual ~MultiDeviceTest() {}
-// };
+template <typename TypeParam>
+class MultiDeviceTest : public ::testing::Test {
+ public:
+  using Dtype = typename TypeParam::Dtype;
 
-// typedef ::testing::Types<float, double> TestDtypes;
+ protected:
+  MultiDeviceTest() { Latte::set_mode(TypeParam::device); }
+  virtual ~MultiDeviceTest() {}
+};
 
-// template <typename TypeParam>
-// struct CPUDevice {
-//   typedef TypeParam Dtype;
-//   static const Latte::Brew device = Latte::CPU;
-// };
+using TestDtypes = ::testing::Types<float, double>;
 
-// template <typename Dtype>
-// class CPUDeviceTest : public MultiDeviceTest<CPUDevice<Dtype> > {
-// };
+template <typename TypeParam>
+struct CPUDevice {
+  using Dtype = TypeParam;
+  static const Latte::Brew device = Latte::CPU;
+};
 
-// #ifdef CPU_ONLY
+template <typename Dtype>
+class CPUDeviceTest : public MultiDeviceTest<CPUDevice<Dtype>> {};
 
-// typedef ::testing::Types<CPUDevice<float>,
-//                          CPUDevice<double> > TestDtypesAndDevices;
+#ifdef CPU_ONLY
 
-// #else
+using TestDtypesAndDevices =
+    ::testing::Types<CPUDevice<float>, CPUDevice<double>>;
 
-// template <typename TypeParam>
-// struct GPUDevice {
-//   typedef TypeParam Dtype;
-//   static const Latte::Brew device = Latte::GPU;
-// };
+#else
 
-// template <typename Dtype>
-// class GPUDeviceTest : public MultiDeviceTest<GPUDevice<Dtype> > {
-// };
+template <typename TypeParam>
+struct GPUDevice {
+  using Dtype = TypeParam;
+  static const Latte::Brew device = Latte::GPU;
+};
 
-// typedef ::testing::Types<CPUDevice<float>, CPUDevice<double>,
-//                          GPUDevice<float>, GPUDevice<double> >
-//                          TestDtypesAndDevices;
+template <typename Dtype>
+class GPUDeviceTest : public MultiDeviceTest<GPUDevice<Dtype>> {};
 
-// #endif
+using TestDtypesAndDevices =
+    ::testing::Types<CPUDevice<float>, CPUDevice<double>, GPUDevice<float>,
+                     GPUDevice<double>>;
 
-// }  // namespace latte
+#endif
+
+}  // namespace latte
 
 #endif  // LATTE_TEST_TEST_LATTE_MAIN_H_
