@@ -16,7 +16,7 @@ list(INSERT Latte_LINKER_LIBS 0 PUBLIC latteproto) # note, crucial to prepend!
 latte_pickup_latte_sources(${PROJECT_SOURCE_DIR})
 
 if(HAVE_CUDA)
-latte_cuda_compile(cuda_objs ${cuda})
+  latte_cuda_compile(cuda_objs ${cuda})
   list(APPEND srcs ${cuda_objs} ${cuda})
 endif()
 

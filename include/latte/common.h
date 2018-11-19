@@ -28,6 +28,9 @@ namespace latte {
   template class classname<float>;   \
   template class classname<double>
 
+// A simple macro to mark codes that are not implemented, so that when the code
+// is executed we will see a fatal log.
+#define NOT_IMPLEMENTED LOG(FATAL) << "Not Implemented Yet"
 class Noncopyable {
  protected:
   constexpr Noncopyable() = default;
@@ -94,7 +97,7 @@ class Latte : public Noncopyable {
 
    private:
     class Generator;
-    std::shared_ptr<Generator> generator_;
+    shared_ptr<Generator> generator_;
   };
 
   // Getters for boost rng, curand, and cublas handles
@@ -145,7 +148,7 @@ class Latte : public Noncopyable {
   cublasHandle_t cublas_handle_;
   curandGenerator_t curand_generator_;
 #endif
-  std::shared_ptr<RNG> random_generator_;
+  shared_ptr<RNG> random_generator_;
 
   Brew mode_;
 
