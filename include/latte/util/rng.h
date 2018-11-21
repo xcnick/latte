@@ -1,5 +1,5 @@
-#ifndef LATTE_RNG_CPP_H_
-#define LATTE_RNG_CPP_H_
+#ifndef LATTE_UTIL_RNG_H_
+#define LATTE_UTIL_RNG_H_
 
 #include <algorithm>
 #include <iterator>
@@ -38,4 +38,4 @@ inline void shuffle(RandomAccessIterator begin, RandomAccessIterator end) {
 }
 }  // namespace latte
 
-#endif  // LATTE_RNG_CPP_H_
+#endif  // LATTE_UTIL_RNG_H_
