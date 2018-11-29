@@ -1,7 +1,7 @@
 #include <thread>
 
-#include "latte/util/benchmark.h"
 #include "latte/common.h"
+#include "latte/util/benchmark.h"
 
 #include "latte/test/test_latte_main.h"
 
@@ -85,4 +85,4 @@ TYPED_TEST(BenchmarkTest, TestTimerSeconds) {
   EXPECT_TRUE(timer.has_run_at_least_once());
 }
 
-}
+}  // namespace latte

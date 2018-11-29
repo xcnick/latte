@@ -32,6 +32,9 @@ void latte_cpu_scale(const int n, const Dtype alpha, const Dtype *x, Dtype* y);
 template <typename Dtype>
 void latte_copy(const int N, const Dtype *X, Dtype *Y);
 
+template <typename Dtype>
+void latte_set(const int N, const Dtype alpha, Dtype *X);
+
 inline void latte_memset(const size_t N, const int alpha, void *X) {
   std::memset(X, alpha, N);
 }

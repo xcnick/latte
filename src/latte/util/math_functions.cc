@@ -96,6 +96,23 @@ template void latte_copy<float>(const int N, const float *X, float *Y);
 template void latte_copy<double>(const int N, const double *X, double *Y);
 
 template <typename Dtype>
+void latte_set(const int N, const Dtype alpha, Dtype *Y) {
+  if (alpha == 0) {
+    std::memset(Y, 0, sizeof(Dtype) * N);  // NOLINT(latte/alt_fn)
+    return;
+  }
+  for (int i = 0; i < N; ++i) {
+    Y[i] = alpha;
+  }
+}
+
+template void latte_set<int>(const int N, const int alpha, int *Y);
+template void latte_set<unsigned int>(const int N, const unsigned int alpha,
+                                      unsigned int *Y);
+template void latte_set<float>(const int N, const float alpha, float *Y);
+template void latte_set<double>(const int N, const double alpha, double *Y);
+
+template <typename Dtype>
 Dtype latte_nextafter(const Dtype b) {
   return std::nextafter(b, std::numeric_limits<Dtype>::max());
 }
