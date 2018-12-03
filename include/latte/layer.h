@@ -22,7 +22,7 @@ class Layer : public Noncopyable {
     }
   }
 
-  virtual ~Layer() {}
+  virtual ~Layer() = default;
 
   // 配置函数，不可被覆盖
   void SetUp(const vector<Blob<Dtype> *> &bottom,

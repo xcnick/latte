@@ -72,17 +72,6 @@ class Blob : public Noncopyable {
     return axis_index;
   }
 
-  inline int LegacyShape(int index) const {
-    CHECK_LE(num_axes(), 4)
-        << "Cannot use legacy accessors on Blobs with > 4 axes";
-    CHECK_LT(index, 4);
-    CHECK_GE(index, -4);
-    if (index >= num_axes() || index < -num_axes()) {
-      return 1;
-    }
-    return shape(index);
-  }
-
   inline int offset(const vector<int> &indices) const {
     CHECK_LE(indices.size(), num_axes());
     int offset = 0;
