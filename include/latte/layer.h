@@ -3,6 +3,7 @@
 
 #include "latte/blob.h"
 #include "latte/common.h"
+#include "latte/layer_factory.h"
 #include "latte/proto/latte.pb.h"
 #include "latte/util/math_functions.h"
 

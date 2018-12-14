@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 package latte;
 
 // Specifies the shape (dimensions) of a Blob.
@@ -35,15 +37,15 @@ message Datum {
 }
 
 message FillerParameter {
-  string type = 1;
-  float value = 2; // the value in constant filler
-  float min = 3; // the min value in uniform filler
-  float max = 4; // the max value in uniform filler
-  float mean = 5; // the mean value in Gaussian filler
-  float std = 6; // the std value in Gaussian filler
+  google.protobuf.StringValue type = 1;
+  google.protobuf.FloatValue value = 2;   // the value in constant filler
+  google.protobuf.FloatValue min = 3;     // the min value in uniform filler
+  google.protobuf.FloatValue max = 4;     // the max value in uniform filler
+  google.protobuf.FloatValue mean = 5;    // the mean value in Gaussian filler
+  google.protobuf.FloatValue std = 6;     // the std value in Gaussian filler
   // The expected number of non-zero output weights for a given input in
   // Gaussian filler -- the default -1 means don't perform sparsification.
-  int32 sparse = 7;
+  google.protobuf.Int32Value sparse = 7;
   // Normalize the filler variance by fan_in, fan_out, or their average.
   // Applies to 'xavier' and 'msra' fillers.
   enum VarianceNorm {
@@ -768,20 +770,20 @@ message InfogainLossParameter {
 }
 
 message InnerProductParameter {
-  uint32 num_output = 1; // The number of outputs for the layer
-  bool bias_term = 2; // whether to have bias terms
-  FillerParameter weight_filler = 3; // The filler for the weight
-  FillerParameter bias_filler = 4; // The filler for the bias
+  uint32 num_output = 1;                        // The number of outputs for the layer
+  google.protobuf.BoolValue bias_term = 2;      // whether to have bias terms
+  FillerParameter weight_filler = 3;            // The filler for the weight
+  FillerParameter bias_filler = 4;              // The filler for the bias
 
   // The first axis to be lumped into a single inner product computation;
   // all preceding axes are retained in the output.
   // May be negative to index from the end (e.g., -1 for the last axis).
-  int32 axis = 5;
+  google.protobuf.Int32Value axis = 5;
   // Specify whether to transpose the weight matrix or not.
   // If transpose == true, any operations will be performed on the transpose
   // of the weight matrix. The weight matrix itself is not going to be transposed
   // but rather the transfer flag of operations will be toggled accordingly.
-  bool transpose = 6;
+  google.protobuf.BoolValue transpose = 6;
 }
 
 message InputParameter {

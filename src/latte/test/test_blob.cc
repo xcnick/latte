@@ -80,8 +80,8 @@ TYPED_TEST(BlobMathTest, TestSumOfSquares) {
   EXPECT_EQ(0, this->blob_->sumsq_data());
   EXPECT_EQ(0, this->blob_->sumsq_diff());
   FillerParameter filler_param;
-  filler_param.set_min(-3);
-  filler_param.set_max(3);
+  filler_param.mutable_min()->set_value(-3);
+  filler_param.mutable_max()->set_value(3);
   UniformFiller<Dtype> filler(filler_param);
   filler.Fill(this->blob_);
   Dtype expected_sumsq = 0;
@@ -131,8 +131,8 @@ TYPED_TEST(BlobMathTest, TestAsum) {
   EXPECT_EQ(0, this->blob_->asum_data());
   EXPECT_EQ(0, this->blob_->asum_diff());
   FillerParameter filler_param;
-  filler_param.set_min(-3);
-  filler_param.set_max(3);
+  filler_param.mutable_min()->set_value(-3);
+  filler_param.mutable_max()->set_value(3);
   UniformFiller<Dtype> filler(filler_param);
   filler.Fill(this->blob_);
   Dtype expected_asum = 0;
@@ -181,8 +181,8 @@ TYPED_TEST(BlobMathTest, TestScale) {
   EXPECT_EQ(0, this->blob_->asum_data());
   EXPECT_EQ(0, this->blob_->asum_diff());
   FillerParameter filler_param;
-  filler_param.set_min(-3);
-  filler_param.set_max(3);
+  filler_param.mutable_min()->set_value(-3);
+  filler_param.mutable_max()->set_value(3);
   UniformFiller<Dtype> filler(filler_param);
   filler.Fill(this->blob_);
   const Dtype asum_before_scale = this->blob_->asum_data();

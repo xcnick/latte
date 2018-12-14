@@ -9,6 +9,20 @@ extern "C" {
 
 namespace latte {
 
+// C=alpha*A*B+beta*C
+// 当alpha = 1, beta = 0 时，相当于C = A * B
+template <typename Dtype>
+void latte_cpu_gemm(const CBLAS_TRANSPOSE TransA, const CBLAS_TRANSPOSE TransB,
+                    const int M, const int N, const int K, const Dtype alpha,
+                    const Dtype *A, const Dtype *B, const Dtype beta, Dtype *C);
+
+// y=alpha*A*x+beta*y
+// x和y是向量，A是矩阵(M * N)
+template <typename Dtype>
+void latte_cpu_gemv(const CBLAS_TRANSPOSE TransA, const int M, const int N,
+                    const Dtype alpha, const Dtype *A, const Dtype *x,
+                    const Dtype beta, Dtype *y);
+
 template <typename Dtype>
 void latte_axpy(const int N, const Dtype alpha, const Dtype *X, Dtype *Y);
 
@@ -27,7 +41,7 @@ template <typename Dtype>
 void latte_scal(const int N, const Dtype alpha, Dtype *X);
 
 template <typename Dtype>
-void latte_cpu_scale(const int n, const Dtype alpha, const Dtype *x, Dtype* y);
+void latte_cpu_scale(const int n, const Dtype alpha, const Dtype *x, Dtype *y);
 
 template <typename Dtype>
 void latte_copy(const int N, const Dtype *X, Dtype *Y);
@@ -43,13 +57,23 @@ template <typename Dtype>
 Dtype latte_nextafter(const Dtype b);
 
 template <typename Dtype>
-void latte_rng_uniform(const int n, const Dtype a, const Dtype b, Dtype* r);
+void latte_rng_uniform(const int n, const Dtype a, const Dtype b, Dtype *r);
 
 #ifndef CPU_ONLY
 
 void latte_gpu_memcpy(const size_t N, const void *X, void *Y);
 
 void latte_gpu_memset(const size_t N, const int alpha, void *X);
+
+template <typename Dtype>
+void latte_gpu_gemm(const CBLAS_TRANSPOSE TransA, const CBLAS_TRANSPOSE TransB,
+                    const int M, const int N, const int K, const Dtype alpha,
+                    const Dtype *A, const Dtype *B, const Dtype beta, Dtype *C);
+
+template <typename Dtype>
+void latte_gpu_gemv(const CBLAS_TRANSPOSE TransA, const int M, const int N,
+                    const Dtype alpha, const Dtype *A, const Dtype *x,
+                    const Dtype beta, Dtype *y);
 
 template <typename Dtype>
 void latte_gpu_axpy(const int N, const Dtype alpha, const Dtype *X, Dtype *Y);
