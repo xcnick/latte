@@ -62,12 +62,12 @@ int Latte::FindDevice(const int start_id) {
 
 class Latte::RNG::Generator {
  public:
-  Generator() : rng_(new Latte::rng_t(cluster_seedgen())) {}
-  explicit Generator(unsigned int seed) : rng_(new Latte::rng_t(seed)) {}
-  Latte::rng_t *rng() { return rng_.get(); }
+  Generator() : rng_(new latte::rng_t(cluster_seedgen())) {}
+  explicit Generator(unsigned int seed) : rng_(new latte::rng_t(seed)) {}
+  latte::rng_t *rng() { return rng_.get(); }
 
  private:
-  shared_ptr<Latte::rng_t> rng_;
+  shared_ptr<latte::rng_t> rng_;
 };
 
 Latte::RNG::RNG() : generator_(new Generator()) {}

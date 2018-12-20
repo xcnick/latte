@@ -1,5 +1,6 @@
 #include "latte/util/math_functions.h"
 #include <random>
+#include <functional>
 #include "latte/util/rng.h"
 
 namespace latte {
