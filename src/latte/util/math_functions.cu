@@ -87,6 +87,30 @@ void latte_gpu_dot<float>(const int n, const float *x, const float *y,
 }
 
 template <>
+void latte_gpu_scal<float>(const int N, const float alpha, float *X) {
+  CUBLAS_CHECK(cublasSscal(Latte::cublas_handle(), N, &alpha, X, 1));
+}
+
+template <>
+void latte_gpu_scal<double>(const int N, const double alpha, double *X) {
+  CUBLAS_CHECK(cublasDscal(Latte::cublas_handle(), N, &alpha, X, 1));
+}
+
+template <>
+void latte_gpu_axpby<float>(const int N, const float alpha, const float *X,
+                            const float beta, float *Y) {
+  latte_gpu_scal<float>(N, beta, Y);
+  latte_gpu_axpy<float>(N, alpha, X, Y);
+}
+
+template <>
+void latte_gpu_axpby<double>(const int N, const double alpha, const double *X,
+                             const double beta, double *Y) {
+  latte_gpu_scal<double>(N, beta, Y);
+  latte_gpu_axpy<double>(N, alpha, X, Y);
+}
+
+template <>
 void latte_gpu_dot<double>(const int n, const double *x, const double *y,
                            double *out) {
   CUBLAS_CHECK(cublasDdot(Latte::cublas_handle(), n, x, 1, y, 1, out));
@@ -102,14 +126,57 @@ void latte_gpu_asum<double>(const int n, const double *x, double *y) {
   CUBLAS_CHECK(cublasDasum(Latte::cublas_handle(), n, x, 1, y));
 }
 
-template <>
-void latte_gpu_scal<float>(const int N, const float alpha, float *X) {
-  CUBLAS_CHECK(cublasSscal(Latte::cublas_handle(), N, &alpha, X, 1));
+template <typename Dtype>
+__global__ void set_kernel(const int n, const Dtype alpha, Dtype *y) {
+  CUDA_KERNEL_LOOP(index, n) {
+    y[index] = alpha;
+  }
 }
 
-template <>
-void latte_gpu_scal<double>(const int N, const double alpha, double *X) {
-  CUBLAS_CHECK(cublasDscal(Latte::cublas_handle(), N, &alpha, X, 1));
+template <typename Dtype>
+void latte_gpu_set(const int N, const Dtype alpha, Dtype *Y) {
+  if (alpha == 0) {
+    CUDA_CHECK(cudaMemset(Y, 0, sizeof(Dtype) * N));
+    return;
+  }
+  set_kernel<Dtype><<<LATTE_GET_BLOCKS(N), LATTE_CUDA_NUM_THREADS>>>(
+      N, alpha, Y);
 }
+
+template void latte_gpu_set<int>(const int N, const int alpha, int *Y);
+template void latte_gpu_set<float>(const int N, const float alpha, float *Y);
+template void latte_gpu_set<double>(const int N, const double alpha, double *Y);
+
+template <typename Dtype>
+__global__ void add_kernel(const int n, const Dtype *a,
+                           const Dtype *b, Dtype *y) {
+  CUDA_KERNEL_LOOP(index, n) {
+    y[index] = a[index] + b[index];
+  }
+}
+
+template <typename Dtype>
+void latte_gpu_add(const int N, const Dtype *a, const Dtype *b, Dtype *y) {
+  add_kernel<Dtype><<<LATTE_GET_BLOCKS(N), LATTE_CUDA_NUM_THREADS>>>(N, a, b, y);
+}
+
+template void latte_gpu_add<float>(const int N, const float *a, const float *b, float *y);
+template void latte_gpu_add<double>(const int N, const double *a, const double *b, double *y);
+
+template <typename Dtype>
+__global__ void sub_kernel(const int n, const Dtype *a,
+                           const Dtype *b, Dtype *y) {
+  CUDA_KERNEL_LOOP(index, n) {
+    y[index] = a[index] - b[index];
+  }
+}
+
+template <typename Dtype>
+void latte_gpu_sub(const int N, const Dtype *a, const Dtype *b, Dtype *y) {
+  sub_kernel<Dtype><<<LATTE_GET_BLOCKS(N), LATTE_CUDA_NUM_THREADS>>>(N, a, b, y);
+}
+
+template void latte_gpu_sub<float>(const int N, const float *a, const float *b, float *y);
+template void latte_gpu_sub<double>(const int N, const double *a, const double *b, double *y);
 
 }  // namespace latte

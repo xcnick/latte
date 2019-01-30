@@ -1,6 +1,6 @@
 #include "latte/util/math_functions.h"
-#include <random>
 #include <functional>
+#include <random>
 #include "latte/util/rng.h"
 
 namespace latte {
@@ -14,8 +14,8 @@ void latte_cpu_gemv<float>(const CBLAS_TRANSPOSE TransA, const int M,
 
 template <>
 void latte_cpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M,
-                           const int N, const double alpha, const double *A,
-                           const double *x, const double beta, double *y) {
+                            const int N, const double alpha, const double *A,
+                            const double *x, const double beta, double *y) {
   cblas_dgemv(CblasRowMajor, TransA, M, N, alpha, A, N, x, 1, beta, y, 1);
 }
 
@@ -53,6 +53,18 @@ template <>
 void latte_axpy<double>(const int N, const double alpha, const double *X,
                         double *Y) {
   cblas_daxpy(N, alpha, X, 1, Y, 1);
+}
+
+template <>
+void latte_cpu_axpby<float>(const int N, const float alpha, const float *X,
+                            const float beta, float *Y) {
+  cblas_saxpby(N, alpha, X, 1, beta, Y, 1);
+}
+
+template <>
+void latte_cpu_axpby<double>(const int N, const double alpha, const double *X,
+                            const double beta, double *Y) {
+  cblas_daxpby(N, alpha, X, 1, beta, Y, 1);
 }
 
 template <typename Dtype>
@@ -151,6 +163,28 @@ template void latte_set<unsigned int>(const int N, const unsigned int alpha,
 template void latte_set<float>(const int N, const float alpha, float *Y);
 template void latte_set<double>(const int N, const double alpha, double *Y);
 
+template <>
+void latte_add<float>(const int n, const float *a, const float *b, float *y) {
+  vsAdd(n, a, b, y);
+}
+
+template <>
+void latte_add<double>(const int n, const double *a, const double *b,
+                       double *y) {
+  vdAdd(n, a, b, y);
+}
+
+template <>
+void latte_sub<float>(const int n, const float *a, const float *b, float *y) {
+  vsAdd(n, a, b, y);
+}
+
+template <>
+void latte_sub<double>(const int n, const double *a, const double *b,
+                       double *y) {
+  vdAdd(n, a, b, y);
+}
+
 template <typename Dtype>
 Dtype latte_nextafter(const Dtype b) {
   return std::nextafter(b, std::numeric_limits<Dtype>::max());
@@ -179,5 +213,63 @@ template void latte_rng_uniform<float>(const int n, const float a,
 
 template void latte_rng_uniform<double>(const int n, const double a,
                                         const double b, double *r);
+
+template <typename Dtype>
+void latte_rng_gaussian(const int n, const Dtype mu, const Dtype sigma,
+                        Dtype *r) {
+  CHECK_GE(n, 0);
+  CHECK(r);
+  CHECK_GT(sigma, 0);
+  std::normal_distribution<Dtype> random_distribution(mu, sigma);
+  std::function<Dtype()> variate_generator =
+      bind(random_distribution, std::ref(*latte_rng()));
+  for (int i = 0; i < n; ++i) {
+    r[i] = variate_generator();
+  }
+}
+
+template void latte_rng_gaussian<float>(const int n, const float mu,
+                                        const float sigma, float *r);
+
+template void latte_rng_gaussian<double>(const int n, const double mu,
+                                         const double sigma, double *r);
+
+template <typename Dtype>
+void latte_rng_bernoulli(const int n, const Dtype p, int *r) {
+  CHECK_GE(n, 0);
+  CHECK(r);
+  CHECK_GE(p, 0);
+  CHECK_LE(p, 1);
+  std::bernoulli_distribution random_distribution(p);
+  std::function<Dtype()> variate_generator =
+      bind(random_distribution, std::ref(*latte_rng()));
+  for (int i = 0; i < n; ++i) {
+    r[i] = variate_generator();
+  }
+}
+
+template void latte_rng_bernoulli<double>(const int n, const double p, int *r);
+
+template void latte_rng_bernoulli<float>(const int n, const float p, int *r);
+
+template <typename Dtype>
+void latte_rng_bernoulli(const int n, const Dtype p, unsigned int *r) {
+  CHECK_GE(n, 0);
+  CHECK(r);
+  CHECK_GE(p, 0);
+  CHECK_LE(p, 1);
+  std::bernoulli_distribution random_distribution(p);
+  std::function<Dtype()> variate_generator =
+      bind(random_distribution, std::ref(*latte_rng()));
+  for (int i = 0; i < n; ++i) {
+    r[i] = static_cast<unsigned int>(variate_generator());
+  }
+}
+
+template void latte_rng_bernoulli<double>(const int n, const double p,
+                                          unsigned int *r);
+
+template void latte_rng_bernoulli<float>(const int n, const float p,
+                                         unsigned int *r);
 
 }  // namespace latte

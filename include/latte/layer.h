@@ -21,6 +21,16 @@ class Layer : public Noncopyable {
         blobs_[i]->FromProto(layer_param_.blobs(i));
       }
     }
+    for (int i = 0; i < layer_param_.param_size(); ++i) {
+      if (layer_param_.param(i).lr_mult_oneof_case() ==
+          ParamSpec::LrMultOneofCase::LR_MULT_ONEOF_NOT_SET) {
+        layer_param_.mutable_param(i)->set_lr_mult(1.f);
+      }
+      if (layer_param_.param(i).decay_mult_oneof_case() ==
+          ParamSpec::DecayMultOneofCase::DECAY_MULT_ONEOF_NOT_SET) {
+        layer_param_.mutable_param(i)->set_decay_mult(1.f);
+      }
+    }
   }
 
   virtual ~Layer() = default;

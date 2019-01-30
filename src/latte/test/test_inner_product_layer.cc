@@ -97,12 +97,10 @@ TYPED_TEST(InnerProductLayerTest, TestForward) {
     InnerProductParameter *inner_product_param =
         layer_param.mutable_inner_product_param();
     inner_product_param->set_num_output(10);
-    inner_product_param->mutable_weight_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_min()->set_value(1);
-    inner_product_param->mutable_bias_filler()->mutable_max()->set_value(2);
+    inner_product_param->mutable_weight_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_min(1);
+    inner_product_param->mutable_bias_filler()->set_max(2);
     shared_ptr<InnerProductLayer<Dtype>> layer(
         new InnerProductLayer<Dtype>(layer_param));
     layer->SetUp(this->blob_bottom_vec_, this->blob_top_vec_);
@@ -128,12 +126,10 @@ TYPED_TEST(InnerProductLayerTest, TestForwardTranspose) {
     InnerProductParameter *inner_product_param =
         layer_param.mutable_inner_product_param();
     inner_product_param->set_num_output(10);
-    inner_product_param->mutable_weight_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_min()->set_value(1);
-    inner_product_param->mutable_bias_filler()->mutable_max()->set_value(2);
+    inner_product_param->mutable_weight_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_min(1);
+    inner_product_param->mutable_bias_filler()->set_max(2);
     inner_product_param->mutable_transpose()->set_value(false);
     shared_ptr<InnerProductLayer<Dtype>> layer(
         new InnerProductLayer<Dtype>(layer_param));
@@ -193,12 +189,10 @@ TYPED_TEST(InnerProductLayerTest, TestForwardNoBatch) {
     InnerProductParameter *inner_product_param =
         layer_param.mutable_inner_product_param();
     inner_product_param->set_num_output(10);
-    inner_product_param->mutable_weight_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_min()->set_value(1);
-    inner_product_param->mutable_bias_filler()->mutable_max()->set_value(2);
+    inner_product_param->mutable_weight_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_min(1);
+    inner_product_param->mutable_bias_filler()->set_max(2);
     shared_ptr<InnerProductLayer<Dtype>> layer(
         new InnerProductLayer<Dtype>(layer_param));
     layer->SetUp(this->blob_bottom_vec_, this->blob_top_vec_);
@@ -224,12 +218,10 @@ TYPED_TEST(InnerProductLayerTest, TestBackwardTranspose) {
     InnerProductParameter *inner_product_param =
         layer_param.mutable_inner_product_param();
     inner_product_param->set_num_output(10);
-    inner_product_param->mutable_weight_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_type()->set_value(
-        "uniform");
-    inner_product_param->mutable_bias_filler()->mutable_min()->set_value(1);
-    inner_product_param->mutable_bias_filler()->mutable_max()->set_value(2);
+    inner_product_param->mutable_weight_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_type("uniform");
+    inner_product_param->mutable_bias_filler()->set_min(1);
+    inner_product_param->mutable_bias_filler()->set_max(2);
     inner_product_param->mutable_transpose()->set_value(false);
     shared_ptr<InnerProductLayer<Dtype>> layer(
         new InnerProductLayer<Dtype>(layer_param));

@@ -37,15 +37,23 @@ message Datum {
 }
 
 message FillerParameter {
-  google.protobuf.StringValue type = 1;
-  google.protobuf.FloatValue value = 2;   // the value in constant filler
-  google.protobuf.FloatValue min = 3;     // the min value in uniform filler
-  google.protobuf.FloatValue max = 4;     // the max value in uniform filler
-  google.protobuf.FloatValue mean = 5;    // the mean value in Gaussian filler
-  google.protobuf.FloatValue std = 6;     // the std value in Gaussian filler
+  oneof type_oneof{
+    string type = 1;
+  }
+  float value = 2;   // the value in constant filler
+  float min = 3;     // the min value in uniform filler
+  oneof max_oneof {
+    float max = 4;     // the max value in uniform filler
+  }
+  float mean = 5;    // the mean value in Gaussian filler
+  oneof std_oneof {
+    float std = 6;     // the std value in Gaussian filler
+  }
   // The expected number of non-zero output weights for a given input in
   // Gaussian filler -- the default -1 means don't perform sparsification.
-  google.protobuf.Int32Value sparse = 7;
+  oneof sparse_oneof {
+    int32 sparse = 7;
+  }
   // Normalize the filler variance by fan_in, fan_out, or their average.
   // Applies to 'xavier' and 'msra' fillers.
   enum VarianceNorm {
@@ -69,7 +77,7 @@ message NetParameter {
   NetState state = 3;
   // Print debugging information about results while running Net::Forward,
   // Net::Backward, and Net::Update.
-  bool debug_info = 4;
+  google.protobuf.BoolValue debug_info = 4;
 
   // The layers that make up the net.  Each of their configurations, including
   // connectivity and behavior, is specified as a LayerParameter.
@@ -251,8 +259,8 @@ message NetStateRule {
 
   // Set the minimum and/or maximum levels in which the layer should be used.
   // Leave undefined to meet the rule regardless of level.
-  int32 min_level = 2;
-  int32 max_level = 3;
+  google.protobuf.Int32Value min_level = 2;
+  google.protobuf.Int32Value max_level = 3;
 
   // Customizable sets of stages to include or exclude.
   // The net must have ALL of the specified stages and NONE of the specified
@@ -281,10 +289,14 @@ message ParamSpec {
   }
 
   // The multiplier on the global learning rate for this parameter.
-  float lr_mult = 3;
+  oneof lr_mult_oneof {
+    float lr_mult = 3;
+  }
 
   // The multiplier on the global weight decay for this parameter.
-  float decay_mult = 4;
+  oneof decay_mult_oneof {
+    float decay_mult = 4;
+  }
 }
 
 // NOTE
@@ -359,8 +371,6 @@ message LayerParameter {
   EmbedParameter embed_param = 137;
   ExpParameter exp_param = 111;
   FlattenParameter flatten_param = 135;
-  HDF5DataParameter hdf5_data_param = 112;
-  HDF5OutputParameter hdf5_output_param = 113;
   HingeLossParameter hinge_loss_param = 114;
   ImageDataParameter image_data_param = 115;
   InfogainLossParameter infogain_loss_param = 116;

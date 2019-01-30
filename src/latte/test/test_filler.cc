@@ -7,7 +7,7 @@ template <typename Dtype>
 class ConstantFillerTest : public ::testing::Test {
  protected:
   ConstantFillerTest() : blob_(new Blob<Dtype>()), filler_param_() {
-    filler_param_.mutable_value()->set_value(10.);
+    filler_param_.set_value(10.);
     filler_.reset(new ConstantFiller<Dtype>(filler_param_));
   }
 
@@ -18,7 +18,7 @@ class ConstantFillerTest : public ::testing::Test {
     const int count = blob_->count();
     const Dtype *data = blob_->cpu_data();
     for (int i = 0; i < count; ++i) {
-      EXPECT_EQ(data[i], filler_param_.value().value());
+      EXPECT_EQ(data[i], filler_param_.value());
     }
   }
 
