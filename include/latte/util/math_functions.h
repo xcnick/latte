@@ -153,6 +153,15 @@ template <typename Dtype>
 void latte_sub(const int N, const Dtype *a, const Dtype *b, Dtype *y);
 
 template <typename Dtype>
+void latte_mul(const int N, const Dtype *a, const Dtype *b, Dtype *y);
+
+template <typename Dtype>
+void latte_div(const int N, const Dtype *a, const Dtype *b, Dtype *y);
+
+template <typename Dtype>
+void latte_exp(const int N, const Dtype* a, Dtype* y);
+
+template <typename Dtype>
 Dtype latte_nextafter(const Dtype b);
 
 template <typename Dtype>
@@ -208,6 +217,12 @@ void latte_gpu_add(const int N, const Dtype *a, const Dtype *b, Dtype *y);
 
 template <typename Dtype>
 void latte_gpu_sub(const int N, const Dtype *a, const Dtype *b, Dtype *y);
+
+template <typename Dtype>
+void latte_gpu_mul(const int N, const Dtype *a, const Dtype *b, Dtype *y);
+
+template <typename Dtype>
+void latte_gpu_div(const int N, const Dtype *a, const Dtype *b, Dtype *y);
 
 #endif
 }  // namespace latte

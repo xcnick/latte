@@ -179,4 +179,36 @@ void latte_gpu_sub(const int N, const Dtype *a, const Dtype *b, Dtype *y) {
 template void latte_gpu_sub<float>(const int N, const float *a, const float *b, float *y);
 template void latte_gpu_sub<double>(const int N, const double *a, const double *b, double *y);
 
+template <typename Dtype>
+__global__ void mul_kernel(const int n, const Dtype *a,
+                           const Dtype *b, Dtype *y) {
+  CUDA_KERNEL_LOOP(index, n) {
+    y[index] = a[index] * b[index];
+  }
+}
+
+template <typename Dtype>
+void latte_gpu_mul(const int N, const Dtype *a, const Dtype *b, Dtype *y) {
+  mul_kernel<Dtype><<<LATTE_GET_BLOCKS(N), LATTE_CUDA_NUM_THREADS>>>(N, a, b, y);
+}
+
+template void latte_gpu_mul<float>(const int N, const float *a, const float *b, float *y);
+template void latte_gpu_mul<double>(const int N, const double *a, const double *b, double *y);
+
+template <typename Dtype>
+__global__ void div_kernel(const int n, const Dtype *a,
+                           const Dtype *b, Dtype *y) {
+  CUDA_KERNEL_LOOP(index, n) {
+    y[index] = a[index] / b[index];
+  }
+}
+
+template <typename Dtype>
+void latte_gpu_div(const int N, const Dtype *a, const Dtype *b, Dtype *y) {
+  div_kernel<Dtype><<<LATTE_GET_BLOCKS(N), LATTE_CUDA_NUM_THREADS>>>(N, a, b, y);
+}
+
+template void latte_gpu_div<float>(const int N, const float *a, const float *b, float *y);
+template void latte_gpu_div<double>(const int N, const double *a, const double *b, double *y);
+
 }  // namespace latte

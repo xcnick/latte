@@ -63,7 +63,7 @@ void latte_cpu_axpby<float>(const int N, const float alpha, const float *X,
 
 template <>
 void latte_cpu_axpby<double>(const int N, const double alpha, const double *X,
-                            const double beta, double *Y) {
+                             const double beta, double *Y) {
   cblas_daxpby(N, alpha, X, 1, beta, Y, 1);
 }
 
@@ -183,6 +183,38 @@ template <>
 void latte_sub<double>(const int n, const double *a, const double *b,
                        double *y) {
   vdAdd(n, a, b, y);
+}
+
+template <>
+void latte_mul<float>(const int n, const float *a, const float *b, float *y) {
+  vsMul(n, a, b, y);
+}
+
+template <>
+void latte_mul<double>(const int n, const double *a, const double *b,
+                       double *y) {
+  vdMul(n, a, b, y);
+}
+
+template <>
+void latte_div<float>(const int n, const float *a, const float *b, float *y) {
+  vsDiv(n, a, b, y);
+}
+
+template <>
+void latte_div<double>(const int n, const double *a, const double *b,
+                       double *y) {
+  vdDiv(n, a, b, y);
+}
+
+template <>
+void latte_exp<float>(const int n, const float *a, float *y) {
+  vsExp(n, a, y);
+}
+
+template <>
+void latte_exp<double>(const int n, const double *a, double *y) {
+  vdExp(n, a, y);
 }
 
 template <typename Dtype>

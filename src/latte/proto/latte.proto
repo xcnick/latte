@@ -1102,7 +1102,9 @@ message SoftmaxParameter {
   // The axis along which to perform the softmax -- may be negative to index
   // from the end (e.g., -1 for the last axis).
   // Any other axes will be evaluated as independent softmaxes.
-  int32 axis = 2;
+  oneof axis_oneof {
+    int32 axis = 2;
+  }
 }
 
 // Message that stores parameters used by SwishLayer

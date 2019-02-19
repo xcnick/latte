@@ -14,6 +14,7 @@ void EuclideanLossLayer<Dtype>::Reshape(const vector<Blob<Dtype> *> &bottom,
 template <typename Dtype>
 void EuclideanLossLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype> *> &bottom,
                                             const vector<Blob<Dtype> *> &top) {
+  // N * C * H * W，后三项都是1，则count = shape(0)
   int count = bottom[0]->count();
   latte_sub(count, bottom[0]->cpu_data(), bottom[1]->cpu_data(),
             diff_.mutable_cpu_data());
