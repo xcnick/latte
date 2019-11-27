@@ -1,15 +1,21 @@
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && apt-get install -y --no-install-recommends \
-         libatlas-base-dev \
-         libprotobuf-dev \
-         protobuf-compiler \
-         git \
-         cmake \
-         libgoogle-glog-dev \
-         libgflags-dev \
-         libopencv-dev && \
-     rm -rf /var/lib/apt/lists/*
+    libatlas-base-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    git \
+    cmake \
+    libgoogle-glog-dev \
+    libgflags-dev \
+    libopencv-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /workspace
+RUN groupadd -g 1000 latte && useradd -u 1000 -g 1000 -m -d /home/latte latte -s /bin/bash
+
+USER latte
+WORKDIR /home/latte
+
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
