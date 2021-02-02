@@ -17,7 +17,7 @@ set(CMAKE_CONFIGURATION_TYPES  Release CACHE STRING "set build type to release" 
 # ---[ Using cmake scripts and modules
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
-include(ExternalProject)
+# include(ExternalProject)
 # include(GNUInstallDirs)
 
 include(cmake/Utils.cmake)
@@ -34,7 +34,7 @@ latte_option(USE_CUDNN "Build Latte with cuDNN library support" ON IF NOT CPU_ON
 # latte_option(BUILD_matlab "Build Matlab wrapper" OFF IF UNIX OR APPLE)
 # latte_option(BUILD_docs   "Build documentation" ON IF UNIX OR APPLE)
 # latte_option(BUILD_python_layer "Build the Latte Python layer" ON)
-latte_option(USE_OPENCV "Build with OpenCV support" ON)
+# latte_option(USE_OPENCV "Build with OpenCV support" ON)
 # latte_option(USE_LEVELDB "Build with levelDB" ON)
 # latte_option(USE_LMDB "Build with lmdb" ON)
 # latte_option(ALLOW_LMDB_NOLOCK "Allow MDB_NOLOCK when reading LMDB files (only if necessary)" OFF)
@@ -42,6 +42,8 @@ latte_option(USE_OPENCV "Build with OpenCV support" ON)
 
 # This code is taken from https://github.com/sh1r0/latte-android-lib
 # latte_option(USE_HDF5 "Build with hdf5" ON)
+
+set(THIRD_PARTY_PATH ${PROJECT_SOURCE_DIR}/third_party)
 
 # ---[ Dependencies
 include(cmake/Dependencies.cmake)
@@ -67,8 +69,8 @@ configure_file(cmake/Templates/latte_config.h.in "${PROJECT_BINARY_DIR}/latte_co
 # ---[ Includes
 set(Latte_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(Latte_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
-set(THIRDPARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
-include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRDPARTY_DIR})
+
+include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRD_PARTY_PATH})
 
 # ---[ Includes & defines for CUDA
 
@@ -76,21 +78,20 @@ include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRDPARTY_DIR}
 # (cuda_compile() has per-call flags, but we set them here too for clarity)
 #
 # list(REMOVE_ITEM ...) invocations remove PRIVATE and PUBLIC keywords from collected definitions and include pathes
-# if(HAVE_CUDA)
-#   # pass include pathes to cuda_include_directories()
-#   set(Latte_ALL_INCLUDE_DIRS ${Latte_INCLUDE_DIRS})
-#   list(REMOVE_ITEM Latte_ALL_INCLUDE_DIRS PRIVATE PUBLIC)
-#   cuda_include_directories(${Latte_INCLUDE_DIR} ${Latte_SRC_DIR} ${Latte_ALL_INCLUDE_DIRS})
+if(HAVE_CUDA)
+  # pass include pathes to cuda_include_directories()
+  set(Latte_ALL_INCLUDE_DIRS ${Latte_INCLUDE_DIRS})
+  list(REMOVE_ITEM Latte_ALL_INCLUDE_DIRS PRIVATE PUBLIC)
+  cuda_include_directories(${Latte_INCLUDE_DIR} ${Latte_SRC_DIR} ${Latte_ALL_INCLUDE_DIRS})
 
-#   # add definitions to nvcc flags directly
-#   set(Latte_ALL_DEFINITIONS ${Latte_DEFINITIONS})
-#   list(REMOVE_ITEM Latte_ALL_DEFINITIONS PRIVATE PUBLIC)
-#   list(APPEND CUDA_NVCC_FLAGS ${Latte_ALL_DEFINITIONS})
-# endif()
+  # add definitions to nvcc flags directly
+  set(Latte_ALL_DEFINITIONS ${Latte_DEFINITIONS})
+  list(REMOVE_ITEM Latte_ALL_DEFINITIONS PRIVATE PUBLIC)
+  list(APPEND CUDA_NVCC_FLAGS ${Latte_ALL_DEFINITIONS})
+endif()
+
 
 # ---[ Subdirectories
-add_subdirectory(${THIRDPARTY_DIR}/gtest)
-#add_subdirectory(src/gtest)
 add_subdirectory(src/latte)
 add_subdirectory(tools)
 # add_subdirectory(examples)

@@ -31,6 +31,3 @@ endif()
   #define EXAMPLES_SOURCE_DIR "examples/"
   #define CMAKE_EXT ""
 #endif
-
-/* IO libraries */
-#cmakedefine USE_OPENCV

@@ -29,6 +29,11 @@ if(USE_OPENMP)
   list(APPEND Latte_COMPILE_OPTIONS PRIVATE ${OpenMP_CXX_FLAGS})
 endif()
 
+# ---[ Google-protobuf
+include(cmake/External/protobuf.cmake)
+list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROTOBUF_INCLUDE_DIRS})
+#list(APPEND Latte_LINKER_LIBS PUBLIC ${GLOG_LIBRARIES})
+
 # ---[ Google-glog
 include("cmake/External/glog.cmake")
 list(APPEND Latte_INCLUDE_DIRS PUBLIC ${GLOG_INCLUDE_DIRS})
@@ -39,8 +44,15 @@ include("cmake/External/gflags.cmake")
 list(APPEND Latte_INCLUDE_DIRS PUBLIC ${GFLAGS_INCLUDE_DIRS})
 list(APPEND Latte_LINKER_LIBS PUBLIC ${GFLAGS_LIBRARIES})
 
-# ---[ Google-protobuf
-include(cmake/ProtoBuf.cmake)
+# ---[ Google-gtest
+include("cmake/External/gtest.cmake")
+list(APPEND Latte_INCLUDE_DIRS PUBLIC ${GTEST_INCLUDE_DIRS})
+list(APPEND Latte_LINKER_LIBS PUBLIC ${GTEST_LIBRARIES})
+
+# ---[ OpenBlas
+include("cmake/External/openblas.cmake")
+list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OPENBLAS_INCLUDE_DIRS})
+list(APPEND Latte_LINKER_LIBS PUBLIC ${OPENBLAS_LIBRARIES})
 
 # ---[ HDF5
 # find_package(HDF5 COMPONENTS HL REQUIRED)
@@ -101,31 +113,27 @@ endif()
 # endif()
 
 # ---[ OpenCV
-if(USE_OPENCV)
-  find_package(OpenCV QUIET COMPONENTS core highgui imgproc imgcodecs)
-  if(NOT OpenCV_FOUND) # if not OpenCV 3.x, then imgcodecs are not found
-    find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc)
-  endif()
-  list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OpenCV_INCLUDE_DIRS})
-  list(APPEND Latte_LINKER_LIBS PUBLIC ${OpenCV_LIBS})
-  message(STATUS "OpenCV found (${OpenCV_CONFIG_PATH})")
-  list(APPEND Latte_DEFINITIONS PUBLIC -DUSE_OPENCV)
-endif()
+# if(USE_OPENCV)
+#   find_package(OpenCV QUIET COMPONENTS core highgui imgproc imgcodecs)
+#   if(NOT OpenCV_FOUND) # if not OpenCV 3.x, then imgcodecs are not found
+#     find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc)
+#   endif()
+#   list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OpenCV_INCLUDE_DIRS})
+#   list(APPEND Latte_LINKER_LIBS PUBLIC ${OpenCV_LIBS})
+#   message(STATUS "OpenCV found (${OpenCV_CONFIG_PATH})")
+#   list(APPEND Latte_DEFINITIONS PUBLIC -DUSE_OPENCV)
+# endif()
 
 # ---[ BLAS
-set(BLAS "Atlas" CACHE STRING "Selected BLAS library")
+set(BLAS "Open" CACHE STRING "Selected BLAS library")
 set_property(CACHE BLAS PROPERTY STRINGS "Atlas;Open;MKL")
 
-if(BLAS STREQUAL "Atlas" OR BLAS STREQUAL "atlas")
-  find_package(Atlas REQUIRED)
-  list(APPEND Latte_INCLUDE_DIRS PUBLIC ${Atlas_INCLUDE_DIR})
-  list(APPEND Latte_LINKER_LIBS PUBLIC ${Atlas_LIBRARIES})
-elseif(BLAS STREQUAL "Open" OR BLAS STREQUAL "open")
-  find_package(OpenBLAS REQUIRED)
+if(BLAS STREQUAL "Open" OR BLAS STREQUAL "open")
+  #find_package(OpenBLAS REQUIRED)
   list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OpenBLAS_INCLUDE_DIR})
   list(APPEND Latte_LINKER_LIBS PUBLIC ${OpenBLAS_LIB})
 elseif(BLAS STREQUAL "MKL" OR BLAS STREQUAL "mkl")
-  find_package(MKL REQUIRED)
+  #find_package(MKL REQUIRED)
   list(APPEND Latte_INCLUDE_DIRS PUBLIC ${MKL_INCLUDE_DIR})
   list(APPEND Latte_LINKER_LIBS PUBLIC ${MKL_LIBRARIES})
   list(APPEND Latte_DEFINITIONS PUBLIC -DUSE_MKL)

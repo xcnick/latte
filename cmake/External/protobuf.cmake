@@ -1,12 +1,41 @@
-# Finds Google Protocol Buffers library and compilers and extends
-# the standard cmake script with version and python generation support
+# include(FetchContent)
+# FetchContent_Declare(
+#   protobuf
+#   GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+#   GIT_TAG        v3.12.0
+#   SOURCE_SUBDIR  cmake
+# )
+# set(protobuf_BUILD_TESTS OFF)
+# FetchContent_MakeAvailable(protobuf)
 
-find_package( Protobuf REQUIRED )
+include(ExternalProject)
+
+set(PROTOBUF_INSTALL_DIR ${THIRD_PARTY_PATH}/protobuf)
+set(PROTOBUF_INCLUDE_DIR ${THIRD_PARTY_PATH}/protobuf/include)
+
+ExternalProject_add(
+    extern_protobuf
+    GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
+    GIT_TAG        v3.14.0
+    GIT_SHALLOW
+    SOURCE_SUBDIR  cmake
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROTOBUF_INSTALL_DIR} -DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER} -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -Dprotobuf_BUILD_EXAMPLES=OFF -Dprotobuf_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+)
+
+add_library(protobuf INTERFACE)
+
+add_executable(protoc IMPORTED GLOBAL)
+add_dependencies(protoc protobuf)
+set_target_properties(
+    protoc PROPERTIES
+    IMPORTED_LOCATION ${protobuf_BINARY_DIR}/bin/protoc
+)
+
 list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROTOBUF_INCLUDE_DIR})
-list(APPEND Latte_LINKER_LIBS PUBLIC ${PROTOBUF_LIBRARIES})
+list(APPEND Latte_LINKER_LIBS PUBLIC ${PROTOBUF_INSTALL_DIR}/lib/libprotobuf.a)
 
-# As of Ubuntu 14.04 protoc is no longer a part of libprotobuf-dev package
-# and should be installed separately as in: sudo apt-get install protobuf-compiler
+set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOBUF_INSTALL_DIR}/bin/protoc)
+
 if(EXISTS ${PROTOBUF_PROTOC_EXECUTABLE})
   message(STATUS "Found PROTOBUF Compiler: ${PROTOBUF_PROTOC_EXECUTABLE}")
 else()

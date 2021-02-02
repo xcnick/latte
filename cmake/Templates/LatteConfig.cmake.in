@@ -20,23 +20,23 @@
 #
 # OpenCV dependency
 
-if(@USE_OPENCV@)
-  if(NOT OpenCV_FOUND)
-    set(Latte_OpenCV_CONFIG_PATH "@OpenCV_CONFIG_PATH@")
-    if(Latte_OpenCV_CONFIG_PATH)
-      get_filename_component(Latte_OpenCV_CONFIG_PATH ${Latte_OpenCV_CONFIG_PATH} ABSOLUTE)
-
-      if(EXISTS ${Latte_OpenCV_CONFIG_PATH} AND NOT TARGET opencv_core)
-        message(STATUS "Latte: using OpenCV config from ${Latte_OpenCV_CONFIG_PATH}")
-        include(${Latte_OpenCV_CONFIG_PATH}/OpenCVModules.cmake)
-      endif()
-
-    else()
-      find_package(OpenCV REQUIRED)
-    endif()
-    unset(Latte_OpenCV_CONFIG_PATH)
-  endif()
-endif()
+# if(@USE_OPENCV@)
+#   if(NOT OpenCV_FOUND)
+#     set(Latte_OpenCV_CONFIG_PATH "@OpenCV_CONFIG_PATH@")
+#     if(Latte_OpenCV_CONFIG_PATH)
+#       get_filename_component(Latte_OpenCV_CONFIG_PATH ${Latte_OpenCV_CONFIG_PATH} ABSOLUTE)
+#
+#       if(EXISTS ${Latte_OpenCV_CONFIG_PATH} AND NOT TARGET opencv_core)
+#         message(STATUS "Latte: using OpenCV config from ${Latte_OpenCV_CONFIG_PATH}")
+#         include(${Latte_OpenCV_CONFIG_PATH}/OpenCVModules.cmake)
+#       endif()
+#
+#     else()
+#       find_package(OpenCV REQUIRED)
+#     endif()
+#     unset(Latte_OpenCV_CONFIG_PATH)
+#   endif()
+# endif()
 
 # Compute paths
 get_filename_component(Latte_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)

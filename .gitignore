@@ -98,3 +98,6 @@ LOCK
 LOG*
 CURRENT
 MANIFEST-*
+
+# third_party
+third_party

@@ -1,35 +1,26 @@
-if (NOT __GFLAGS_INCLUDED) # guard against multiple includes
-  set(__GFLAGS_INCLUDED TRUE)
+# include(FetchContent)
+# FetchContent_Declare(
+#   gflags
+#   GIT_REPOSITORY https://github.com/gflags/gflags.git
+#   GIT_TAG        v2.2.2
+# )
+#
+# FetchContent_MakeAvailable(gflags)
 
-  # use the system-wide gflags if present
-  find_package(GFlags)
-  if (GFLAGS_FOUND)
-    set(GFLAGS_EXTERNAL FALSE)
-  else()
-    # gflags will use pthreads if it's available in the system, so we must link with it
-    find_package(Threads)
+include(ExternalProject)
 
-    # build directory
-    set(gflags_PREFIX ${CMAKE_BINARY_DIR}/external/gflags-prefix)
-    # install directory
-    set(gflags_INSTALL ${CMAKE_BINARY_DIR}/external/gflags-install)
+set(GFLAGS_INSTALL_DIR ${THIRD_PARTY_PATH}/gflags)
+set(GFLAGS_INCLUDE_DIRS ${THIRD_PARTY_PATH}/gflags/include)
+set(GFLAGS_LIBRARIES ${THIRD_PARTY_PATH}/gflags/lib/libgflags.a)
 
-    # we build gflags statically, but want to link it into the latte shared library
-    # this requires position-independent code
-    if (UNIX)
-        set(GFLAGS_EXTRA_COMPILER_FLAGS "-fPIC")
-    endif()
+ExternalProject_add(
+    extern_gflags
+    GIT_REPOSITORY https://github.com/gflags/gflags.git
+    GIT_TAG        v2.2.2
+    GIT_SHALLOW
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${GFLAGS_INSTALL_DIR}
+)
 
-    set(GFLAGS_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${GFLAGS_EXTRA_COMPILER_FLAGS})
-    set(GFLAGS_C_FLAGS ${CMAKE_C_FLAGS} ${GFLAGS_EXTRA_COMPILER_FLAGS})
-
-    set(GFLAGS_FOUND TRUE)
-    set(GFLAGS_INCLUDE_DIRS ${gflags_INSTALL}/include)
-    set(GFLAGS_LIBRARIES ${gflags_INSTALL}/lib/libgflags.a ${CMAKE_THREAD_LIBS_INIT})
-    set(GFLAGS_LIBRARY_DIRS ${gflags_INSTALL}/lib)
-    set(GFLAGS_EXTERNAL TRUE)
-
-    list(APPEND external_project_dependencies gflags)
-  endif()
-
-endif()
+add_library(gflags STATIC IMPORTED GLOBAL)
+set_property(TARGET gflags PROPERTY IMPORTED_LOCATION ${GFLAGS_LIBRARIES})
+add_dependencies(gflags extern_gflags)
