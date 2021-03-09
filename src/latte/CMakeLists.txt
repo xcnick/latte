@@ -10,6 +10,8 @@ target_include_directories(latteproto PUBLIC ${PROTOBUF_INCLUDE_DIR})
 
 list(INSERT Latte_LINKER_LIBS 0 PUBLIC latteproto) # note, crucial to prepend!
 
+add_dependencies(latteproto protobuf)
+
 # --[ Latte library
 
 # creates 'test_srcs', 'srcs', 'test_cuda', 'cuda' lists

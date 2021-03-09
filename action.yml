@@ -1,0 +1,7 @@
+name: build-latte
+description: 'build latte and run unitests'
+runs:
+  using: 'docker'
+  image: 'latte:ci'
+  args:
+      - '/workspace'
