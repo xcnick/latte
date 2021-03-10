@@ -14,13 +14,9 @@ set(GFLAGS_INCLUDE_DIRS ${THIRD_PARTY_PATH}/gflags/include)
 set(GFLAGS_LIBRARIES ${THIRD_PARTY_PATH}/gflags/lib/libgflags.a)
 
 ExternalProject_add(
-    extern_gflags
+    gflags
     GIT_REPOSITORY https://github.com/gflags/gflags.git
     GIT_TAG        v2.2.2
     GIT_SHALLOW
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${GFLAGS_INSTALL_DIR}
 )
-
-add_library(gflags STATIC IMPORTED GLOBAL)
-set_property(TARGET gflags PROPERTY IMPORTED_LOCATION ${GFLAGS_LIBRARIES})
-add_dependencies(gflags extern_gflags)

@@ -1,22 +1,28 @@
 # Latte
 
-[![Build Status](https://travis-ci.org/xcnick/latte.svg?branch=master)](https://travis-ci.org/xcnick/latte)
+[![Build Latte](https://github.com/xcnick/latte/actions/workflows/build.yml/badge.svg)](https://github.com/xcnick/latte/actions/workflows/build.yml)
 
 A mini deeplearning framework inspired by [Caffe](https://github.com/BVLC/caffe)
 
 ## Dependencies
 * GCC
 * CUDA
-*	CMake
+* CUDNN
+* CMake
 
 ## Build from source
-1. Install dependencies.
-2. Build
-```
+
+1. Build
+
+```bash
 mkdir build
-cd build && cmake .. && make -j
+cd build
+cmake ..
+cmake --build . -- -j
 ```
-3. Test(Optional)
-```
+
+2. Test(Optional)
+
+```bash
 make runtest
 ```
