@@ -14,5 +14,5 @@ jobs:
       run: docker build -t latte:ci -f docker/dockerfile_ci .
 
     - name: Build Latte
-      uses: ./
+      uses: ./.github/actions
       id: build-latte

@@ -5,6 +5,7 @@
 A mini deeplearning framework inspired by [Caffe](https://github.com/BVLC/caffe)
 
 ## Dependencies
+
 * GCC
 * CUDA
 * CUDNN
