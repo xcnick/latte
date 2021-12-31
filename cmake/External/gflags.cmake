@@ -18,5 +18,6 @@ ExternalProject_add(
     GIT_REPOSITORY https://github.com/gflags/gflags.git
     GIT_TAG        v2.2.2
     GIT_SHALLOW
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${GFLAGS_INSTALL_DIR}
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${GFLAGS_INSTALL_DIR} \\
+               -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 )

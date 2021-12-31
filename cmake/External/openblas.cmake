@@ -16,7 +16,7 @@ set(OPENBLAS_LIBRARIES ${THIRD_PARTY_PATH}/openblas/lib/libopenblas.a pthread)
 ExternalProject_add(
     openblas
     GIT_REPOSITORY https://github.com/xianyi/OpenBLAS.git
-    GIT_TAG        v0.3.13
+    GIT_TAG        v0.3.19
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_DIR}
     GIT_SHALLOW
 )
