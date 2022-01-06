@@ -55,7 +55,10 @@ include(ExternalProject)
 # ---[ Options
 
 option(BUILD_CUDA "" ON)
-
+if (BUILD_CUDA)
+  option(USE_CUDNN "Build Latte with cuDNN library support" ON)
+endif()
+option(USE_OPENMP "" ON)
 #latte_option(CPU_ONLY  "Build Latte without CUDA support" OFF) # TODO: rename to USE_CUDA
 #latte_option(USE_CUDNN "Build Latte with cuDNN library support" ON IF NOT CPU_ONLY)
 # latte_option(USE_NCCL "Build Latte with NCCL library support" OFF)
@@ -72,9 +75,16 @@ option(BUILD_CUDA "" ON)
 # This code is taken from https://github.com/sh1r0/latte-android-lib
 # latte_option(USE_HDF5 "Build with hdf5" ON)
 
-set(THIRD_PARTY_PATH ${PROJECT_SOURCE_DIR}/third_party)
+set(Latte_INCLUDE_DIRS "")
+set(Latte_LINKER_LIBS "")
+set(Latte_DEFINITIONS "")
+set(Latte_COMPILE_OPTIONS "")
+
+# ---[ Includes
+list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # ---[ third_party
+set(THIRD_PARTY_PATH ${PROJECT_SOURCE_DIR}/third_party)
 include(cmake/third_party.cmake)
 
 # ---[ Flags
@@ -95,11 +105,10 @@ endif()
 # ---[ Config generation
 #configure_file(cmake/Templates/latte_config.h.in "${PROJECT_BINARY_DIR}/latte_config.h")
 
-# ---[ Includes
-set(Latte_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
-set(Latte_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+#set(Latte_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
+#set(Latte_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 
-include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRD_PARTY_PATH})
+#include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRD_PARTY_PATH})
 
 # ---[ Includes & defines for CUDA
 
@@ -118,6 +127,50 @@ include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRD_PARTY_PAT
 #   list(REMOVE_ITEM Latte_ALL_DEFINITIONS PRIVATE PUBLIC)
 #   list(APPEND CUDA_NVCC_FLAGS ${Latte_ALL_DEFINITIONS})
 # endif()
+
+
+if (BUILD_CUDA)
+  # NOTE: if you want to use source PTX with a version different from produced PTX/binary, you should add flags
+  if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 60-real)
+    # Tesla P40/P4, Quadro Pxxx/Pxxxx, GeForce GTX 10xx, TITAN X/Xp
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 61-real)
+    # V100, TITAN V
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 70-real)
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "10.0")
+      # T4, Quadro RTX xxxx, Txxxx, Geforce RTX 20xx, TITAN RTX
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 75-real)
+    endif()
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "11.0")
+      # A100
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 80-real)
+    endif()
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "11.1")
+      # GeForce RTX 30xx
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 86-real)
+    endif()
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "11.0")
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 80-virtual)
+    elseif(CUDA_VERSION VERSION_GREATER_EQUAL "10.0")
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 75-virtual)
+    else()
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 70-virtual)
+    endif()
+  endif()
+  enable_language(CUDA)
+  include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+  message(STATUS "CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES}")
+  set(CUDA_SEPARABLE_COMPILATION OFF)
+
+  if ("${CMAKE_CUDA_COMPILER_ID}" STREQUAL "NVIDIA")
+    if(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER_EQUAL "11.2")
+      set(CUDA_NVCC_THREADS_NUMBER "4" CACHE STRING "")
+      list(APPEND CUDA_NVCC_FLAGS -t ${CUDA_NVCC_THREADS_NUMBER})
+    endif()
+    message(STATUS "CUDA_NVCC_FLAGS: " ${CUDA_NVCC_FLAGS})
+    list(JOIN CUDA_NVCC_FLAGS " " CMAKE_CUDA_FLAGS)
+  endif()
+endif()
 
 
 # ---[ Subdirectories

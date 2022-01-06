@@ -1,13 +1,4 @@
 # These lists are later turned into target properties on main latte library target
-set(Latte_LINKER_LIBS "")
-set(Latte_INCLUDE_DIRS "")
-set(Latte_DEFINITIONS "")
-set(Latte_COMPILE_OPTIONS "")
-
-# ---[ Boost
-# find_package(Boost 1.54 REQUIRED COMPONENTS system thread filesystem)
-# list(APPEND Latte_INCLUDE_DIRS PUBLIC ${Boost_INCLUDE_DIRS})
-# list(APPEND Latte_LINKER_LIBS PUBLIC ${Boost_LIBRARIES})
 
 # ---[ Threads
 find_package(Threads REQUIRED)
@@ -31,7 +22,7 @@ endif()
 
 # ---[ Google-protobuf
 include(cmake/External/protobuf.cmake)
-list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROTOBUF_INCLUDE_DIRS})
+list(APPEND Latte_INCLUDE_DIRS PRIVATE ${PROTOBUF_INCLUDE_DIR})
 #list(APPEND Latte_LINKER_LIBS PUBLIC ${GLOG_LIBRARIES})
 
 # ---[ Google-glog
@@ -41,18 +32,13 @@ list(APPEND Latte_LINKER_LIBS PUBLIC ${GLOG_LIBRARIES})
 
 # ---[ Google-gflags
 include(cmake/External/gflags.cmake)
-list(APPEND Latte_INCLUDE_DIRS PUBLIC ${GFLAGS_INCLUDE_DIRS})
-list(APPEND Latte_LINKER_LIBS PUBLIC ${GFLAGS_LIBRARIES})
+list(APPEND Latte_INCLUDE_DIRS PRIVATE ${GFLAGS_INCLUDE_DIRS})
+list(APPEND Latte_LINKER_LIBS PRIVATE ${GFLAGS_LIBRARIES})
 
 # ---[ Google-gtest
 include(cmake/External/gtest.cmake)
-list(APPEND Latte_INCLUDE_DIRS PUBLIC ${GTEST_INCLUDE_DIRS})
-list(APPEND Latte_LINKER_LIBS PUBLIC ${GTEST_LIBRARIES})
-
-# ---[ OpenBlas
-include(cmake/External/openblas.cmake)
-list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OPENBLAS_INCLUDE_DIRS})
-list(APPEND Latte_LINKER_LIBS PUBLIC ${OPENBLAS_LIBRARIES})
+list(APPEND Latte_INCLUDE_DIRS PRIVATE ${GTEST_INCLUDE_DIRS})
+list(APPEND Latte_LINKER_LIBS PRIVATE ${GTEST_LIBRARIES})
 
 # ---[ HDF5
 # find_package(HDF5 COMPONENTS HL REQUIRED)
@@ -131,11 +117,15 @@ set_property(CACHE BLAS PROPERTY STRINGS "Atlas;Open;MKL")
 
 if(BLAS STREQUAL "Open" OR BLAS STREQUAL "open")
   #find_package(OpenBLAS REQUIRED)
-  list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OpenBLAS_INCLUDE_DIR})
-  list(APPEND Latte_LINKER_LIBS PUBLIC ${OpenBLAS_LIB})
+  # ---[ OpenBlas
+  include(cmake/External/openblas.cmake)
+  list(APPEND Latte_INCLUDE_DIRS PRIVATE ${OPENBLAS_INCLUDE_DIRS})
+  list(APPEND Latte_LINKER_LIBS PRIVATE ${OPENBLAS_LIBRARIES})
+  # list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OpenBLAS_INCLUDE_DIR})
+  # list(APPEND Latte_LINKER_LIBS PUBLIC ${OpenBLAS_LIB})
 elseif(BLAS STREQUAL "MKL" OR BLAS STREQUAL "mkl")
   #find_package(MKL REQUIRED)
-  list(APPEND Latte_INCLUDE_DIRS PUBLIC ${MKL_INCLUDE_DIR})
-  list(APPEND Latte_LINKER_LIBS PUBLIC ${MKL_LIBRARIES})
-  list(APPEND Latte_DEFINITIONS PUBLIC -DUSE_MKL)
+  list(APPEND Latte_INCLUDE_DIRS PRIVATE ${MKL_INCLUDE_DIR})
+  list(APPEND Latte_LINKER_LIBS PRIVATE ${MKL_LIBRARIES})
+  list(APPEND Latte_DEFINITIONS PRIVATE -DUSE_MKL)
 endif()

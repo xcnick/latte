@@ -21,7 +21,7 @@ class SyncedMemory : public Noncopyable {
   SyncedHead head() const { return head_; }
   size_t size() const { return size_; }
 
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
   void async_gpu_push(const cudaStream_t &stream);
 #endif
 

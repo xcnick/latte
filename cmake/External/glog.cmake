@@ -11,7 +11,7 @@ include(ExternalProject)
 
 set(GLOG_INSTALL_DIR ${THIRD_PARTY_PATH}/glog)
 set(GLOG_INCLUDE_DIRS ${THIRD_PARTY_PATH}/glog/include)
-set(GLOG_LIBRARIES ${THIRD_PARTY_PATH}/glog/lib/libglog.so)
+set(GLOG_LIBRARIES ${THIRD_PARTY_PATH}/glog/lib/libglog.a)
 
 ExternalProject_add(
     glog

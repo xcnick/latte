@@ -1,7 +1,6 @@
 set -xe
 
 SRC_ROOT=$1
-mkdir ${SRC_ROOT}/build
-cd ${SRC_ROOT}/build
-cmake ..
-cmake --build . -- -j
+cd ${SRC_ROOT}
+cmake -S . -B build
+cmake --build build -j

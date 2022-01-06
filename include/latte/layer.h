@@ -247,7 +247,7 @@ inline Dtype Layer<Dtype>::Forward(const vector<Blob<Dtype> *> &bottom,
       break;
     case Latte::GPU:
       Forward_gpu(bottom, top);
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       for (int top_id = 0; top_id < top.size(); ++top_id) {
         if (!this->loss(top_id)) {
           continue;

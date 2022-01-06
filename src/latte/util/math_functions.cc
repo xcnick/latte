@@ -129,7 +129,7 @@ template <typename Dtype>
 void latte_copy(const int N, const Dtype *X, Dtype *Y) {
   if (X != Y) {
     if (Latte::mode() == Latte::GPU) {
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       latte_gpu_memcpy(sizeof(Dtype) * N, X, Y);
 #else
       NO_GPU;

@@ -6,7 +6,7 @@ namespace latte {
 
 class CommonTest : public ::testing::Test {};
 
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
 
 TEST_F(CommonTest, TestCublasHandlerGPU) {
   int cuda_device_id;

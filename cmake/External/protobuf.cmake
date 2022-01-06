@@ -36,8 +36,6 @@ add_dependencies(protoc protobuf)
 #     IMPORTED_LOCATION ${protobuf_BINARY_DIR}/bin/protoc
 # )
 
-list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROTOBUF_INCLUDE_DIR})
-list(APPEND Latte_LINKER_LIBS PUBLIC ${PROTOBUF_INSTALL_DIR}/lib/libprotobuf.a)
 
 set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOBUF_INSTALL_DIR}/bin/protoc)
 set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
@@ -58,8 +56,8 @@ set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
 # endif()
 
 # place where to generate protobuf sources
-set(proto_gen_folder "${PROJECT_BINARY_DIR}/include/latte/proto")
-include_directories("${PROJECT_BINARY_DIR}/include")
+set(proto_gen_folder ${PROJECT_BINARY_DIR}/include/latte/proto)
+list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROJECT_BINARY_DIR}/include)
 
 set(PROTOBUF_GENERATE_CPP_APPEND_PATH TRUE)
 

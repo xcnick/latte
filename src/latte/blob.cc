@@ -160,7 +160,7 @@ void Blob<Dtype>::Update() {
       break;
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       latte_gpu_axpy<Dtype>(
           count_, Dtype(-1), reinterpret_cast<const Dtype *>(diff_->gpu_data()),
           reinterpret_cast<Dtype *>(data_->mutable_gpu_data()));
@@ -195,7 +195,7 @@ Dtype Blob<Dtype>::asum_data() const {
       return latte_cpu_asum(count_, cpu_data());
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       Dtype asum;
       latte_gpu_asum(count_, gpu_data(), &asum);
       return asum;
@@ -232,7 +232,7 @@ Dtype Blob<Dtype>::asum_diff() const {
       return latte_cpu_asum(count_, cpu_diff());
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       Dtype asum;
       latte_gpu_asum(count_, gpu_diff(), &asum);
       return asum;
@@ -273,7 +273,7 @@ Dtype Blob<Dtype>::sumsq_data() const {
       break;
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       data = gpu_data();
       latte_gpu_dot(count_, data, data, &sumsq);
 #else
@@ -314,7 +314,7 @@ Dtype Blob<Dtype>::sumsq_diff() const {
       break;
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       diff = gpu_diff();
       latte_gpu_dot(count_, diff, diff, &sumsq);
 #else
@@ -352,7 +352,7 @@ void Blob<Dtype>::scale_data(Dtype scale_factor) {
       return;
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       data = mutable_gpu_data();
       latte_gpu_scal(count_, scale_factor, data);
 #else
@@ -389,7 +389,7 @@ void Blob<Dtype>::scale_diff(Dtype scale_factor) {
       return;
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
       diff = mutable_gpu_diff();
       latte_gpu_scal(count_, scale_factor, diff);
 #else

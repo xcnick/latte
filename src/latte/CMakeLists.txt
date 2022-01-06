@@ -1,7 +1,4 @@
-
-#protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/latte.proto)
-
-# # generate protobuf sources
+# generate protobuf sources
 file(GLOB proto_files proto/*.proto)
 latte_protobuf_generate_cpp(${proto_gen_folder} proto_srcs proto_hdrs ${proto_files})
 
@@ -12,10 +9,27 @@ target_link_libraries(latteproto PUBLIC ${PROTOBUF_LIBRARIES})
 target_include_directories(latteproto PUBLIC ${PROTOBUF_INCLUDE_DIR})
 
 # list(INSERT Latte_LINKER_LIBS 0 PUBLIC latteproto) # note, crucial to prepend!
-
 add_dependencies(latteproto protobuf)
 
+add_subdirectory(layers)
+
 # # --[ Latte library
+
+add_library(latte STATIC)
+target_sources(latte
+  PRIVATE
+    blob.cc
+    common.cc
+    layer_factory.cc
+    layer.cc
+    syncedmem.cc
+)
+
+#message("${Latte_INCLUDE_DIRS}")
+
+target_include_directories(latte PUBLIC ${Latte_INCLUDE_DIRS})
+target_link_libraries(latte PUBLIC ${Latte_LINKER_LIBS} latte_layers)
+
 
 # # creates 'test_srcs', 'srcs', 'test_cuda', 'cuda' lists
 # latte_pickup_latte_sources(${PROJECT_SOURCE_DIR})
@@ -32,10 +46,10 @@ add_dependencies(latteproto protobuf)
 #                                  PUBLIC
 #                                  $<BUILD_INTERFACE:${Latte_INCLUDE_DIR}>
 #                                  $<INSTALL_INTERFACE:include>)
-# target_compile_definitions(latte ${Latte_DEFINITIONS})
-# if(Latte_COMPILE_OPTIONS)
-#   target_compile_options(latte ${Latte_COMPILE_OPTIONS})
-# endif()
+target_compile_definitions(latte PRIVATE ${Latte_DEFINITIONS})
+if(Latte_COMPILE_OPTIONS)
+  target_compile_options(latte PRIVATE ${Latte_COMPILE_OPTIONS})
+endif()
 # set_target_properties(latte PROPERTIES
 #     VERSION   ${LATTE_TARGET_VERSION}
 #     SOVERSION ${LATTE_TARGET_SOVERSION}

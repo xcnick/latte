@@ -9,17 +9,15 @@ A mini deeplearning framework inspired by [Caffe](https://github.com/BVLC/caffe)
 * GCC
 * CUDA
 * CUDNN
-* CMake
+* CMake >= 3.18
 
 ## Build from source
 
 1. Build
 
 ```bash
-mkdir build
-cd build
-cmake ..
-cmake --build . -- -j
+cmake -S . -B build -G Ninja
+cmake --build build
 ```
 
 2. Test(Optional)

@@ -47,7 +47,7 @@ struct CPUDevice {
 template <typename Dtype>
 class CPUDeviceTest : public MultiDeviceTest<CPUDevice<Dtype>> {};
 
-#ifdef CPU_ONLY
+#ifndef WITH_CUDA
 
 using TestDtypesAndDevices =
     ::testing::Types<CPUDevice<float>, CPUDevice<double>>;
