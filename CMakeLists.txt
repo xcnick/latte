@@ -43,7 +43,7 @@ set(latte_cmake_dir ${PROJECT_SOURCE_DIR}/cmake)
 # ---[ Using cmake scripts and modules
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/External)
 
-include(ExternalProject)
+# include(ExternalProject)
 # include(GNUInstallDirs)
 
 # include(cmake/Utils.cmake)

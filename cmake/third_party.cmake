@@ -1,4 +1,5 @@
 # These lists are later turned into target properties on main latte library target
+set(External_PROJECT_TARGETS "")
 
 # ---[ Threads
 find_package(Threads REQUIRED)
@@ -23,7 +24,7 @@ endif()
 # ---[ Google-protobuf
 include(cmake/External/protobuf.cmake)
 list(APPEND Latte_INCLUDE_DIRS PRIVATE ${PROTOBUF_INCLUDE_DIR})
-#list(APPEND Latte_LINKER_LIBS PUBLIC ${GLOG_LIBRARIES})
+list(APPEND Latte_LINKER_LIBS PRIVATE ${PROTOBUF_LIBRARIES})
 
 # ---[ Google-glog
 include(cmake/External/glog.cmake)

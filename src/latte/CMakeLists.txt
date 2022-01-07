@@ -8,9 +8,10 @@ add_library(latteproto STATIC ${proto_hdrs} ${proto_srcs})
 target_link_libraries(latteproto PUBLIC ${PROTOBUF_LIBRARIES})
 target_include_directories(latteproto PUBLIC ${PROTOBUF_INCLUDE_DIR})
 
-# list(INSERT Latte_LINKER_LIBS 0 PUBLIC latteproto) # note, crucial to prepend!
+list(INSERT Latte_LINKER_LIBS 0 PUBLIC latteproto) # note, crucial to prepend!
 add_dependencies(latteproto protobuf)
 
+add_subdirectory(util)
 add_subdirectory(layers)
 
 # # --[ Latte library
@@ -27,8 +28,8 @@ target_sources(latte
 
 #message("${Latte_INCLUDE_DIRS}")
 
-target_include_directories(latte PUBLIC ${Latte_INCLUDE_DIRS})
-target_link_libraries(latte PUBLIC ${Latte_LINKER_LIBS} latte_layers)
+target_include_directories(latte PRIVATE ${Latte_INCLUDE_DIRS})
+target_link_libraries(latte PRIVATE ${Latte_LINKER_LIBS} latte_layers latte_util)
 
 
 # # creates 'test_srcs', 'srcs', 'test_cuda', 'cuda' lists
@@ -56,4 +57,4 @@ endif()
 #     )
 
 # # ---[ Tests
-# add_subdirectory(test)
+add_subdirectory(test)

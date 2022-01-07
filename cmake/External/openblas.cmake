@@ -20,3 +20,5 @@ ExternalProject_add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_DIR}
     GIT_SHALLOW
 )
+
+list(APPEND External_PROJECT_TARGETS openblas)

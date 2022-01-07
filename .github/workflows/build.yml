@@ -1,4 +1,4 @@
-name: Build Latte
+name: Build and Test Latte
 
 on: [push, pull_request]
 
@@ -13,6 +13,6 @@ jobs:
     - name: Build the Docker image
       run: docker build -t latte:ci -f docker/dockerfile_ci .
 
-    - name: Build Latte
+    - name: Build and Test Latte
       uses: ./.github/actions
       id: build-latte

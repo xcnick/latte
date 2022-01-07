@@ -20,6 +20,7 @@ if (BUILD_CUDA)
     message(FATAL_ERROR "CUDA_NVCC_GENCODES is deprecated, use CMAKE_CUDA_ARCHITECTURES instead")
   endif()
   list(APPEND Latte_DEFINITIONS PRIVATE -DWITH_CUDA)
+  list(APPEND Latte_LINKER_LIBS PRIVATE CUDA::cudart CUDA::cublas CUDA::curand)
   # NOTE: For some unknown reason, CUDAToolkit_VERSION may become empty when running cmake again
   set(CUDA_VERSION ${CUDAToolkit_VERSION} CACHE STRING "")
   if(NOT CUDA_VERSION)

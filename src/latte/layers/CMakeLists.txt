@@ -24,8 +24,9 @@ endif()
 target_include_directories(latte_layers PUBLIC ${Latte_INCLUDE_DIRS})
 target_link_libraries(latte_layers PUBLIC ${Latte_LINKER_LIBS})
 
-
 target_compile_definitions(latte_layers PRIVATE ${Latte_DEFINITIONS})
 if(Latte_COMPILE_OPTIONS)
   target_compile_options(latte_layers PRIVATE ${Latte_COMPILE_OPTIONS})
 endif()
+
+add_dependencies(latte_layers ${External_PROJECT_TARGETS})
