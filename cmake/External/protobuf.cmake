@@ -14,7 +14,7 @@ set(PROTOBUF_INSTALL_DIR ${THIRD_PARTY_PATH}/protobuf)
 set(PROTOBUF_INCLUDE_DIR ${THIRD_PARTY_PATH}/protobuf/include)
 set(PROTOBUF_LIBRARIES ${THIRD_PARTY_PATH}/protobuf/lib/libprotobuf.a)
 
-ExternalProject_add(
+ExternalProject_Add(
     protobuf
     GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
     GIT_TAG        v3.19.0

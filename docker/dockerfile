@@ -14,4 +14,4 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1
 RUN groupadd -g 1000 latte && useradd -u 1000 -g 1000 -m -d /home/latte latte -s /bin/bash
 
 USER latte
-WORKDIR /home/latte
+WORKDIR /workspace

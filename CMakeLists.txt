@@ -32,25 +32,10 @@ endif()
 
 set(latte_cmake_dir ${PROJECT_SOURCE_DIR}/cmake)
 
-# ---[ Latte version
-# set(LATTE_TARGET_VERSION "1.0.0" CACHE STRING "Latte logical version")
-# set(LATTE_TARGET_SOVERSION "1.0.0" CACHE STRING "Latte soname version")
-# add_definitions(-DLATTE_VERSION=${LATTE_TARGET_VERSION})
-
-# set(CMAKE_CXX_STANDARD 11)
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ---[ Using cmake scripts and modules
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/External)
 
-# include(ExternalProject)
-# include(GNUInstallDirs)
-
-# include(cmake/Utils.cmake)
-# include(cmake/Targets.cmake)
-# include(cmake/Misc.cmake)
-# include(cmake/Summary.cmake)
-# include(cmake/ConfigGen.cmake)
 
 # ---[ Options
 
@@ -78,7 +63,7 @@ option(USE_OPENMP "" ON)
 set(Latte_INCLUDE_DIRS "")
 set(Latte_LINKER_LIBS "")
 set(Latte_DEFINITIONS "")
-set(Latte_COMPILE_OPTIONS "")
+set(Latte_COMPILE_OPTIONS -Wall)
 
 # ---[ Includes
 list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROJECT_SOURCE_DIR}/include)
@@ -87,46 +72,8 @@ list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROJECT_SOURCE_DIR}/include)
 set(THIRD_PARTY_PATH ${PROJECT_SOURCE_DIR}/third_party)
 include(cmake/third_party.cmake)
 
-# ---[ Flags
-if(UNIX OR APPLE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall")
-endif()
-
-#latte_set_latte_link()
-
-# if(USE_libstdcpp)
-#   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
-#   message("-- Warning: forcing libstdc++ (controlled by USE_libstdcpp option in cmake)")
-# endif()
-
-# ---[ Warnings
-#latte_warnings_disable(CMAKE_CXX_FLAGS -Wno-sign-compare -Wno-uninitialized)
-
-# ---[ Config generation
-#configure_file(cmake/Templates/latte_config.h.in "${PROJECT_BINARY_DIR}/latte_config.h")
-
-#set(Latte_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
-#set(Latte_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
-
-#include_directories(${Latte_INCLUDE_DIR} ${PROJECT_BINARY_DIR} ${THIRD_PARTY_PATH})
-
-# ---[ Includes & defines for CUDA
-
-# cuda_compile() does not have per-call dependencies or include pathes
-# (cuda_compile() has per-call flags, but we set them here too for clarity)
-#
-# list(REMOVE_ITEM ...) invocations remove PRIVATE and PUBLIC keywords from collected definitions and include pathes
-# if(HAVE_CUDA)
-#   # pass include pathes to cuda_include_directories()
-#   set(Latte_ALL_INCLUDE_DIRS ${Latte_INCLUDE_DIRS})
-#   list(REMOVE_ITEM Latte_ALL_INCLUDE_DIRS PRIVATE PUBLIC)
-#   cuda_include_directories(${Latte_INCLUDE_DIR} ${Latte_SRC_DIR} ${Latte_ALL_INCLUDE_DIRS})
-
-#   # add definitions to nvcc flags directly
-#   set(Latte_ALL_DEFINITIONS ${Latte_DEFINITIONS})
-#   list(REMOVE_ITEM Latte_ALL_DEFINITIONS PRIVATE PUBLIC)
-#   list(APPEND CUDA_NVCC_FLAGS ${Latte_ALL_DEFINITIONS})
-# endif()
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
 if (BUILD_CUDA)
@@ -175,34 +122,8 @@ endif()
 
 # ---[ Subdirectories
 add_subdirectory(src/latte)
-#add_subdirectory(tools)
+add_subdirectory(tools)
 # add_subdirectory(examples)
 # add_subdirectory(python)
 # add_subdirectory(matlab)
 # add_subdirectory(docs)
-
-
-# ---[ Linter target
-# add_custom_target(lint COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/cmake/lint.cmake)
-
-# ---[ pytest target
-# if(BUILD_python)
-#   add_custom_target(pytest COMMAND python${python_version} -m unittest discover -s latte/test WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/python )
-#   add_dependencies(pytest pylatte)
-# endif()
-
-# ---[ uninstall target
-# configure_file(
-#     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Uninstall.cmake.in
-#     ${CMAKE_CURRENT_BINARY_DIR}/cmake/Uninstall.cmake
-#     IMMEDIATE @ONLY)
-
-# add_custom_target(uninstall
-#     COMMAND ${CMAKE_COMMAND} -P
-#     ${CMAKE_CURRENT_BINARY_DIR}/cmake/Uninstall.cmake)
-
-# ---[ Configuration summary
-#latte_print_configuration_summary()
-
-# ---[ Export configs generation
-#latte_generate_export_configs()

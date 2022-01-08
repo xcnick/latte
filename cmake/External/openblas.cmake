@@ -13,7 +13,7 @@ set(OPENBLAS_INSTALL_DIR ${THIRD_PARTY_PATH}/openblas)
 set(OPENBLAS_INCLUDE_DIRS ${THIRD_PARTY_PATH}/openblas/include/openblas)
 set(OPENBLAS_LIBRARIES ${THIRD_PARTY_PATH}/openblas/lib/libopenblas.a pthread)
 
-ExternalProject_add(
+ExternalProject_Add(
     openblas
     GIT_REPOSITORY https://github.com/xianyi/OpenBLAS.git
     GIT_TAG        v0.3.19
