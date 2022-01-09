@@ -2,19 +2,19 @@
 #include "latte/test/test_latte_main.h"
 
 namespace latte {
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
   cudaDeviceProp LATTE_TEST_CUDA_PROP;
 #endif
 }
 
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
 using latte::LATTE_TEST_CUDA_PROP;
 #endif
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   latte::GlobalInit(&argc, &argv);
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
   // Before starting testing, let's first print out a few cuda device info.
   int device;
   cudaGetDeviceCount(&device);

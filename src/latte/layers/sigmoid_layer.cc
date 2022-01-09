@@ -36,7 +36,7 @@ void SigmoidLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype> *> &top,
   }
 }
 
-#ifdef CPU_ONLY
+#ifndef WITH_CUDA
 STUB_GPU(SigmoidLayer);
 #endif
 

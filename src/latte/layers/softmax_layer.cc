@@ -94,7 +94,7 @@ void SoftmaxLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype> *> &top,
   latte_mul(top[0]->count(), bottom_diff, top_data, bottom_diff);
 }
 
-#ifdef CPU_ONLY
+#ifndef WITH_CUDA
 STUB_GPU(SoftmaxLayer);
 #endif
 

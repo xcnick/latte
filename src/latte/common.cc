@@ -30,7 +30,7 @@ void GlobalInit(int *pargc, char ***pargv) {
   ::google::InstallFailureSignalHandler();
 }
 
-#ifdef CPU_ONLY  // CPU-only Latte.
+#ifndef WITH_CUDA  // CPU-only Latte.
 
 Latte::Latte()
     : random_generator_(),
@@ -298,6 +298,6 @@ const char *curandGetErrorString(curandStatus_t error) {
   return "Unknown curand status";
 }
 
-#endif  // CPU_ONLY
+#endif  // WITH_CUDA
 
 }  // namespace Latte

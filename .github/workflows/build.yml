@@ -16,3 +16,25 @@ jobs:
     - name: Build Latte
       uses: ./.github/actions
       id: build-latte
+
+  # build_and_test_gpu:
+  #   runs-on: [self-hosted, linux, x64, gpu]
+  #   env:
+  #     CONTAINER_NAME: "latte-run-id-${{ github.run_id }}"
+  #     HTTP_PROXY: "http://192.168.1.186:1080"
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       fetch-depth: 1
+
+  #   - name: Build the Docker image
+  #     run: docker build --build-arg https_proxy=${HTTP_PROXY} --build-arg http_proxy=${HTTP_PROXY} -t latte:ci -f docker/dockerfile .
+
+  #   - name: Start Container
+  #     run: docker run -d --rm --gpus=all --env HTTPS_PROXY=${HTTP_PROXY} --env HTTP_PROXY=${HTTP_PROXY} -v $PWD:/workspace --name ${CONTAINER_NAME} latte:ci sleep 1200
+
+  #   - name: Build and Test Latte
+  #     run: docker exec ${CONTAINER_NAME} bash /workspace/scripts/build_test.sh /workspace
+
+  #   - name: Stop Container
+  #     run: docker stop ${CONTAINER_NAME}

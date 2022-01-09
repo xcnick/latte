@@ -1,36 +1,31 @@
-# The option allows to include in build only selected test files and exclude all others
-# Usage example:
-#  cmake -DBUILD_only_tests="common,net,blob,im2col_kernel"
-set(BUILD_only_tests "" CACHE STRING "Blank or comma-separated list of test files to build without 'test_' prefix and extension")
-latte_leave_only_selected_tests(test_srcs ${BUILD_only_tests})
-latte_leave_only_selected_tests(test_cuda ${BUILD_only_tests})
+enable_testing()
 
-# For 'make runtest' target we don't need to embed test data paths to
-# source files, because test target is executed in source directory
-# That's why the lines below are commented. TODO: remove them
+add_executable(test_latte)
+target_sources(test_latte
+  PRIVATE
+    test_benchmark.cc
+    test_blob.cc
+    test_common.cc
+    test_dummy_data_layer.cc
+    test_euclidean_loss_layer.cc
+    test_filler.cc
+    test_inner_product_layer.cc
+    test_latte_main.cc
+    test_layer_factory.cc
+    #test_net.cc
+    test_softmax_layer.cc
+    test_syncedmem.cc
+)
 
-# definition needed to include CMake generated files
-#add_definitions(-DCMAKE_BUILD)
+include(GoogleTest)
+gtest_discover_tests(test_latte)
 
-# generates test_data/sample_data_list.txt.gen.cmake
-#latte_configure_testdatafile(test_data/sample_data_list.txt)
+target_include_directories(test_latte PRIVATE ${Latte_INCLUDE_DIRS})
+target_link_libraries(test_latte PRIVATE ${Latte_LINKER_LIBS} latte)
 
-set(the_target test.testbin)
-set(test_args --gtest_shuffle)
-
-if(HAVE_CUDA)
-  latte_cuda_compile(test_cuda_objs ${test_cuda})
-  list(APPEND test_srcs ${test_cuda_objs} ${test_cuda})
-else()
-  list(APPEND test_args --gtest_filter="-*GPU*")
+target_compile_definitions(test_latte PRIVATE ${Latte_DEFINITIONS})
+if(Latte_COMPILE_OPTIONS)
+  target_compile_options(test_latte PRIVATE ${Latte_COMPILE_OPTIONS})
 endif()
 
-# ---[ Adding test target
-add_executable(${the_target} EXCLUDE_FROM_ALL ${test_srcs})
-target_link_libraries(${the_target} ${GTEST_LIBRARIES} ${Latte_LINK})
-latte_default_properties(${the_target})
-latte_set_runtime_directory(${the_target} "${PROJECT_BINARY_DIR}/test")
-
-# ---[ Adding runtest
-add_custom_target(runtest COMMAND ${the_target} ${test_args}
-                          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+add_dependencies(test_latte ${External_PROJECT_TARGETS})

@@ -12,27 +12,35 @@ include(ExternalProject)
 
 set(PROTOBUF_INSTALL_DIR ${THIRD_PARTY_PATH}/protobuf)
 set(PROTOBUF_INCLUDE_DIR ${THIRD_PARTY_PATH}/protobuf/include)
+set(PROTOBUF_LIBRARIES ${THIRD_PARTY_PATH}/protobuf/lib/libprotobuf.a)
 
-ExternalProject_add(
+ExternalProject_Add(
     protobuf
     GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-    GIT_TAG        v3.14.0
+    GIT_TAG        v3.19.0
     GIT_SHALLOW
     SOURCE_SUBDIR  cmake
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROTOBUF_INSTALL_DIR} -DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER} -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -Dprotobuf_BUILD_EXAMPLES=OFF -Dprotobuf_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROTOBUF_INSTALL_DIR} \\
+               -DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER} \\
+               -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER} \\
+               -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \\
+               -Dprotobuf_BUILD_EXAMPLES=OFF \\
+               -Dprotobuf_BUILD_TESTS=OFF \\
+               -DBUILD_SHARED_LIBS=OFF \\
+               -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 )
 
 add_executable(protoc IMPORTED GLOBAL)
 add_dependencies(protoc protobuf)
-set_target_properties(
-    protoc PROPERTIES
-    IMPORTED_LOCATION ${protobuf_BINARY_DIR}/bin/protoc
-)
+# set_target_properties(
+#     protoc PROPERTIES
+#     IMPORTED_LOCATION ${protobuf_BINARY_DIR}/bin/protoc
+# )
 
-list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROTOBUF_INCLUDE_DIR})
-list(APPEND Latte_LINKER_LIBS PUBLIC ${PROTOBUF_INSTALL_DIR}/lib/libprotobuf.a)
 
 set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOBUF_INSTALL_DIR}/bin/protoc)
+set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
+
 
 #if(EXISTS ${PROTOBUF_PROTOC_EXECUTABLE})
 #  message(STATUS "Found PROTOBUF Compiler: ${PROTOBUF_PROTOC_EXECUTABLE}")
@@ -40,24 +48,24 @@ set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOBUF_INSTALL_DIR}/bin/protoc)
 #  message(FATAL_ERROR "Could not find PROTOBUF Compiler")
 #endif()
 
-if(PROTOBUF_FOUND)
-  # fetches protobuf version
-  latte_parse_header(${PROTOBUF_INCLUDE_DIR}/google/protobuf/stubs/common.h VERION_LINE GOOGLE_PROTOBUF_VERSION)
-  string(REGEX MATCH "([0-9])00([0-9])00([0-9])" PROTOBUF_VERSION ${GOOGLE_PROTOBUF_VERSION})
-  set(PROTOBUF_VERSION "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}")
-  unset(GOOGLE_PROTOBUF_VERSION)
-endif()
+# if(PROTOBUF_FOUND)
+#   # fetches protobuf version
+#   latte_parse_header(${PROTOBUF_INCLUDE_DIR}/google/protobuf/stubs/common.h VERION_LINE GOOGLE_PROTOBUF_VERSION)
+#   string(REGEX MATCH "([0-9])00([0-9])00([0-9])" PROTOBUF_VERSION ${GOOGLE_PROTOBUF_VERSION})
+#   set(PROTOBUF_VERSION "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}")
+#   unset(GOOGLE_PROTOBUF_VERSION)
+# endif()
 
 # place where to generate protobuf sources
-set(proto_gen_folder "${PROJECT_BINARY_DIR}/include/latte/proto")
-include_directories("${PROJECT_BINARY_DIR}/include")
+set(proto_gen_folder ${PROJECT_BINARY_DIR}/include/latte/proto)
+list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROJECT_BINARY_DIR}/include)
 
 set(PROTOBUF_GENERATE_CPP_APPEND_PATH TRUE)
 
-################################################################################################
-# Modification of standard 'protobuf_generate_cpp()' with output dir parameter and python support
-# Usage:
-#   latte_protobuf_generate_cpp(<output_dir> <srcs_var> <hdrs_var> <proto_files>)
+# ################################################################################################
+# # Modification of standard 'protobuf_generate_cpp()' with output dir parameter and python support
+# # Usage:
+# #   latte_protobuf_generate_cpp(<output_dir> <srcs_var> <hdrs_var> <proto_files>)
 function(latte_protobuf_generate_cpp output_dir srcs_var hdrs_var)
   if(NOT ARGN)
     message(SEND_ERROR "Error: latte_protobuf_generate_cpp_py() called without any proto files")
@@ -76,16 +84,6 @@ function(latte_protobuf_generate_cpp output_dir srcs_var hdrs_var)
     endforeach()
   else()
     set(_protoc_include -I ${CMAKE_CURRENT_SOURCE_DIR})
-  endif()
-
-  if(DEFINED PROTOBUF_IMPORT_DIRS)
-    foreach(dir ${PROTOBUF_IMPORT_DIRS})
-      get_filename_component(abs_path ${dir} ABSOLUTE)
-      list(FIND _protoc_include ${abs_path} _contains_already)
-      if(${_contains_already} EQUAL -1)
-        list(APPEND _protoc_include -I ${abs_path})
-      endif()
-    endforeach()
   endif()
 
   set(${srcs_var})

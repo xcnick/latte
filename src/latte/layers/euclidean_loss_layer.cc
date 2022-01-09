@@ -38,7 +38,7 @@ void EuclideanLossLayer<Dtype>::Backward_cpu(
   }
 }
 
-#ifdef CPU_ONLY
+#ifndef WITH_CUDA
 STUB_GPU(EuclideanLossLayer);
 #endif
 

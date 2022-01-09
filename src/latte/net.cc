@@ -901,7 +901,7 @@ void Net<Dtype>::ClearParamDiffs() {
                   blob->mutable_cpu_diff());
         break;
       case Latte::GPU:
-#ifndef CPU_ONLY
+#ifdef WITH_CUDA
         latte_gpu_set(blob->count(), static_cast<Dtype>(0),
                       blob->mutable_gpu_diff());
 #else
