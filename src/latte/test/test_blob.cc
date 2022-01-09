@@ -22,7 +22,7 @@ class BlobSimpleTest : public ::testing::Test {
   Blob<Dtype> *const blob_preshaped_;
 };
 
-TYPED_TEST_CASE(BlobSimpleTest, TestDtypes);
+TYPED_TEST_SUITE(BlobSimpleTest, TestDtypes);
 
 TYPED_TEST(BlobSimpleTest, TestInitialization) {
   EXPECT_TRUE(this->blob_);
@@ -72,7 +72,7 @@ class BlobMathTest : public MultiDeviceTest<TypeParam> {
   Dtype epsilon_;
 };
 
-TYPED_TEST_CASE(BlobMathTest, TestDtypesAndDevices);
+TYPED_TEST_SUITE(BlobMathTest, TestDtypesAndDevices);
 
 TYPED_TEST(BlobMathTest, TestSumOfSquares) {
   using Dtype = typename TypeParam::Dtype;

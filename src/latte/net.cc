@@ -21,7 +21,7 @@ Net<Dtype>::Net(const string &param_file, Phase phase, const int level,
   //
   param.mutable_state()->set_phase(phase);
   if (stages != nullptr) {
-    for (int i = 0; i < stages->size(); ++i) {
+    for (size_t i = 0; i < stages->size(); ++i) {
       param.mutable_state()->add_stage((*stages)[i]);
     }
   }
@@ -124,8 +124,9 @@ void Net<Dtype>::Init(const NetParameter &in_param) {
     // 初始化blob_loss_weights_: blob_loss_weights_用于存放loss；
     // blob_loss_weights_覆盖了所有层的top blob, 但只有最后一层
     // Loss输出层值才是非0
-    for (int top_id = 0; top_id < top_vecs_[layer_id].size(); ++top_id) {
-      if (blob_loss_weights_.size() <= top_id_vecs_[layer_id][top_id]) {
+    for (size_t top_id = 0; top_id < top_vecs_[layer_id].size(); ++top_id) {
+      if (static_cast<int>(blob_loss_weights_.size()) <=
+          top_id_vecs_[layer_id][top_id]) {
         // top_id_vecs_[layer_id][top_id]是整个net中顺序排列的id号(不是本层
         // 中从0开始的序列号 );每一个top blob都对应一个blob_loss_weights_[id]
         // 的值， 用来存放loss,除了整个net的输出blob外，值都是0
@@ -177,7 +178,8 @@ void Net<Dtype>::Init(const NetParameter &in_param) {
     // need_backward就为true
     layer_need_backward_.push_back(need_backward);
     if (need_backward) {
-      for (int top_id = 0; top_id < top_id_vecs_[layer_id].size(); ++top_id) {
+      for (size_t top_id = 0; top_id < top_id_vecs_[layer_id].size();
+           ++top_id) {
         // 对top blob对应id的blob_need_backward_置true， 该结果会传递到后面一层
         // bottom blob
         blob_need_backward_[top_id_vecs_[layer_id][top_id]] = true;
@@ -192,7 +194,7 @@ void Net<Dtype>::Init(const NetParameter &in_param) {
     bool layer_contributes_loss = false;
     bool layer_skip_propagate_down = true;
     // 遍历该层每个top_blob,  确定该层是否输出loss, 是否要backward计算
-    for (int top_id = 0; top_id < top_vecs_[layer_id].size(); ++top_id) {
+    for (size_t top_id = 0; top_id < top_vecs_[layer_id].size(); ++top_id) {
       const string &blob_name = blob_names_[top_id_vecs_[layer_id][top_id]];
       // 如果当前层是最终输出层，或当前top blob为最终loss做出贡献了就把
       // layer_contributes_loss置true,layer_contributes_loss的true值最开
@@ -215,7 +217,7 @@ void Net<Dtype>::Init(const NetParameter &in_param) {
     // 该层如果同时满足下面if中两个条件, 就相互矛盾, 该层就不进行backward计算
     if (layer_need_backward_[layer_id] && layer_skip_propagate_down) {
       layer_need_backward_[layer_id] = false;
-      for (int bottom_id = 0; bottom_id < bottom_vecs_[layer_id].size();
+      for (size_t bottom_id = 0; bottom_id < bottom_vecs_[layer_id].size();
            ++bottom_id) {
         bottom_need_backward_[layer_id][bottom_id] = false;
       }
@@ -231,7 +233,7 @@ void Net<Dtype>::Init(const NetParameter &in_param) {
                   << " does not need backward computation.";
       }
     }
-    for (int bottom_id = 0; bottom_id < bottom_vecs_[layer_id].size();
+    for (size_t bottom_id = 0; bottom_id < bottom_vecs_[layer_id].size();
          ++bottom_id) {
       if (layer_contributes_loss) {
         const string &blob_name =
@@ -253,9 +255,9 @@ void Net<Dtype>::Init(const NetParameter &in_param) {
   // 如果当前net需要force backward, 将layer_need_backward设成true
   // blob_need_backward会由 layers_[layer_id]->AllowForceBackward(bottom_id)决定
   if (param.force_backward()) {
-    for (int layer_id = 0; layer_id < layers_.size(); ++layer_id) {
+    for (size_t layer_id = 0; layer_id < layers_.size(); ++layer_id) {
       layer_need_backward_[layer_id] = true;
-      for (int bottom_id = 0;
+      for (size_t bottom_id = 0;
            bottom_id < bottom_need_backward_[layer_id].size(); ++bottom_id) {
         bottom_need_backward_[layer_id][bottom_id] =
             bottom_need_backward_[layer_id][bottom_id] ||
@@ -264,7 +266,7 @@ void Net<Dtype>::Init(const NetParameter &in_param) {
             blob_need_backward_[bottom_id_vecs_[layer_id][bottom_id]] ||
             bottom_need_backward_[layer_id][bottom_id];
       }
-      for (int param_id = 0; param_id < layers_[layer_id]->blobs().size();
+      for (size_t param_id = 0; param_id < layers_[layer_id]->blobs().size();
            ++param_id) {
         layers_[layer_id]->set_param_propagate_down(param_id, true);
       }
@@ -616,10 +618,10 @@ void Net<Dtype>::AppendParam(const NetParameter &param, const int layer_id,
 template <typename Dtype>
 Dtype Net<Dtype>::ForwardFromTo(int start, int end) {
   CHECK_GE(start, 0);
-  CHECK_LT(end, layers_.size());
+  CHECK_LT(end, static_cast<int>(layers_.size()));
   Dtype loss = 0;
   for (int i = start; i <= end; ++i) {
-    for (int c = 0; c < before_forward_.size(); ++c) {
+    for (size_t c = 0; c < before_forward_.size(); ++c) {
       before_forward_[c]->run(i);
     }
     Dtype layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
@@ -627,7 +629,7 @@ Dtype Net<Dtype>::ForwardFromTo(int start, int end) {
     if (debug_info_) {
       ForwardDebugInfo(i);
     }
-    for (int c = 0; c < after_forward_.size(); ++c) {
+    for (size_t c = 0; c < after_forward_.size(); ++c) {
       after_forward_[c]->run(i);
     }
   }
@@ -657,9 +659,9 @@ const vector<Blob<Dtype> *> &Net<Dtype>::Forward(Dtype *loss) {
 template <typename Dtype>
 void Net<Dtype>::BackwardFromTo(int start, int end) {
   CHECK_GE(end, 0);
-  CHECK_LT(start, layers_.size());
+  CHECK_LT(start, static_cast<int>(layers_.size()));
   for (int i = start; i >= end; --i) {
-    for (int c = 0; c < before_backward_.size(); ++c) {
+    for (size_t c = 0; c < before_backward_.size(); ++c) {
       before_backward_[c]->run(i);
     }
     if (layer_need_backward_[i]) {
@@ -669,7 +671,7 @@ void Net<Dtype>::BackwardFromTo(int start, int end) {
         BackwardDebugInfo(i);
       }
     }
-    for (int c = 0; c < after_backward_.size(); ++c) {
+    for (size_t c = 0; c < after_backward_.size(); ++c) {
       after_backward_[c]->run(i);
     }
   }
@@ -677,7 +679,7 @@ void Net<Dtype>::BackwardFromTo(int start, int end) {
 
 template <typename Dtype>
 void Net<Dtype>::ForwardDebugInfo(const int layer_id) {
-  for (int top_id = 0; top_id < top_vecs_[layer_id].size(); ++top_id) {
+  for (size_t top_id = 0; top_id < top_vecs_[layer_id].size(); ++top_id) {
     const Blob<Dtype> &blob = *top_vecs_[layer_id][top_id];
     const string &blob_name = blob_names_[top_id_vecs_[layer_id][top_id]];
     const Dtype data_abs_val_mean = blob.asum_data() / blob.count();
@@ -686,7 +688,7 @@ void Net<Dtype>::ForwardDebugInfo(const int layer_id) {
         << "Layer " << layer_names_[layer_id] << ", top blob " << blob_name
         << " data: " << data_abs_val_mean;
   }
-  for (int param_id = 0; param_id < layers_[layer_id]->blobs().size();
+  for (size_t param_id = 0; param_id < layers_[layer_id]->blobs().size();
        ++param_id) {
     const Blob<Dtype> &blob = *layers_[layer_id]->blobs()[param_id];
     const int net_param_id = param_id_vecs_[layer_id][param_id];
@@ -702,7 +704,7 @@ void Net<Dtype>::ForwardDebugInfo(const int layer_id) {
 template <typename Dtype>
 void Net<Dtype>::BackwardDebugInfo(const int layer_id) {
   const vector<Blob<Dtype> *> &bottom_vec = bottom_vecs_[layer_id];
-  for (int bottom_id = 0; bottom_id < bottom_vec.size(); ++bottom_id) {
+  for (size_t bottom_id = 0; bottom_id < bottom_vec.size(); ++bottom_id) {
     if (!bottom_need_backward_[layer_id][bottom_id]) {
       continue;
     }
@@ -714,7 +716,7 @@ void Net<Dtype>::BackwardDebugInfo(const int layer_id) {
         << "Layer " << layer_names_[layer_id] << ", bottom blob " << blob_name
         << " diff: " << diff_abs_val_mean;
   }
-  for (int param_id = 0; param_id < layers_[layer_id]->blobs().size();
+  for (size_t param_id = 0; param_id < layers_[layer_id]->blobs().size();
        ++param_id) {
     if (!layers_[layer_id]->param_propagate_down(param_id)) {
       continue;
@@ -759,11 +761,11 @@ void Net<Dtype>::ShareTrainedLayersWith(const Net *other) {
     Layer<Dtype> *source_layer = other->layers()[i].get();
     const string &source_layer_name = other->layer_names()[i];
     int target_layer_id = 0;
-    while (target_layer_id != layer_names_.size() &&
+    while (target_layer_id != static_cast<int>(layer_names_.size()) &&
            layer_names_[target_layer_id] != source_layer_name) {
       ++target_layer_id;
     }
-    if (target_layer_id == layer_names_.size()) {
+    if (target_layer_id == static_cast<int>(layer_names_.size())) {
       LOG(INFO) << "Ignoring source layer " << source_layer_name;
       continue;
     }
@@ -772,7 +774,7 @@ void Net<Dtype>::ShareTrainedLayersWith(const Net *other) {
         layers_[target_layer_id]->blobs();
     CHECK_EQ(target_blobs.size(), source_layer->blobs().size())
         << "Incompatible number of blobs for layer " << source_layer_name;
-    for (int j = 0; j < target_blobs.size(); ++j) {
+    for (size_t j = 0; j < target_blobs.size(); ++j) {
       Blob<Dtype> *source_blob = source_layer->blobs()[j].get();
       CHECK(target_blobs[j]->shape() == source_blob->shape())
           << "Cannot share param " << j << " weights from layer '"
@@ -799,7 +801,7 @@ void Net<Dtype>::Backward() {
   BackwardFromTo(layers_.size() - 1, 0);
   if (debug_info_) {
     Dtype asum_data = 0, asum_diff = 0, sumsq_data = 0, sumsq_diff = 0;
-    for (int i = 0; i < learnable_params_.size(); ++i) {
+    for (size_t i = 0; i < learnable_params_.size(); ++i) {
       asum_data += learnable_params_[i]->asum_data();
       asum_diff += learnable_params_[i]->asum_diff();
       sumsq_data += learnable_params_[i]->sumsq_data();
@@ -815,7 +817,7 @@ void Net<Dtype>::Backward() {
 
 template <typename Dtype>
 void Net<Dtype>::Reshape() {
-  for (int i = 0; i < layers_.size(); ++i) {
+  for (size_t i = 0; i < layers_.size(); ++i) {
     layers_[i]->Reshape(bottom_vecs_[i], top_vecs_[i]);
   }
 }
@@ -827,20 +829,20 @@ void Net<Dtype>::CopyTrainedLayersFrom(const NetParameter &param) {
     const LayerParameter &source_layer = param.layer(i);
     const string &source_layer_name = source_layer.name();
     int target_layer_id = 0;
-    while (target_layer_id != layer_names_.size() &&
+    while (target_layer_id != static_cast<int>(layer_names_.size()) &&
            layer_names_[target_layer_id] != source_layer_name) {
       ++target_layer_id;
     }
-    if (target_layer_id == layer_names_.size()) {
+    if (target_layer_id == static_cast<int>(layer_names_.size())) {
       LOG(INFO) << "Ignoring source layer " << source_layer_name;
       continue;
     }
     DLOG(INFO) << "Copying source layer " << source_layer_name;
     vector<shared_ptr<Blob<Dtype> > > &target_blobs =
         layers_[target_layer_id]->blobs();
-    CHECK_EQ(target_blobs.size(), source_layer.blobs_size())
+    CHECK_EQ(static_cast<int>(target_blobs.size()), source_layer.blobs_size())
         << "Incompatible number of blobs for layer " << source_layer_name;
-    for (int j = 0; j < target_blobs.size(); ++j) {
+    for (size_t j = 0; j < target_blobs.size(); ++j) {
       if (!target_blobs[j]->ShapeEquals(source_layer.blobs(j))) {
         Blob<Dtype> source_blob;
         const bool kReshape = true;
@@ -878,7 +880,7 @@ void Net<Dtype>::ToProto(NetParameter *param, bool write_diff) const {
   param->set_name(name_);
   // Add bottom and top
   DLOG(INFO) << "Serializing " << layers_.size() << " layers";
-  for (int i = 0; i < layers_.size(); ++i) {
+  for (size_t i = 0; i < layers_.size(); ++i) {
     LayerParameter *layer_param = param->add_layer();
     layers_[i]->ToProto(layer_param, write_diff);
   }
@@ -886,14 +888,14 @@ void Net<Dtype>::ToProto(NetParameter *param, bool write_diff) const {
 
 template <typename Dtype>
 void Net<Dtype>::Update() {
-  for (int i = 0; i < learnable_params_.size(); ++i) {
+  for (size_t i = 0; i < learnable_params_.size(); ++i) {
     learnable_params_[i]->Update();
   }
 }
 
 template <typename Dtype>
 void Net<Dtype>::ClearParamDiffs() {
-  for (int i = 0; i < learnable_params_.size(); ++i) {
+  for (size_t i = 0; i < learnable_params_.size(); ++i) {
     Blob<Dtype> *blob = learnable_params_[i];
     switch (Latte::mode()) {
       case Latte::CPU:
@@ -914,7 +916,7 @@ void Net<Dtype>::ClearParamDiffs() {
 
 template <typename Dtype>
 void Net<Dtype>::ShareWeights() {
-  for (int i = 0; i < params_.size(); ++i) {
+  for (size_t i = 0; i < params_.size(); ++i) {
     if (param_owners_[i] < 0) {
       continue;
     }

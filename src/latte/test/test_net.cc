@@ -99,7 +99,7 @@ class NetTest : public MultiDeviceTest<TypeParam> {
   shared_ptr<Net<Dtype> > net_;
 };
 
-TYPED_TEST_CASE(NetTest, TestDtypesAndDevices);
+TYPED_TEST_SUITE(NetTest, TestDtypesAndDevices);
 
 TYPED_TEST(NetTest, TestHasBlob) {
   this->InitTinyNet();

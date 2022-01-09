@@ -23,6 +23,7 @@ target_sources(latte
     common.cc
     layer_factory.cc
     layer.cc
+    net.cc
     syncedmem.cc
 )
 

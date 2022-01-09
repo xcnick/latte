@@ -42,7 +42,7 @@ class LayerRegistry {
   // Adds a creator.
   static void AddCreator(const string &type, Creator creator) {
     CreatorRegistry &registry = Registry();
-    CHECK_EQ(registry.count(type), 0)
+    CHECK_EQ(static_cast<int>(registry.count(type)), 0)
         << "Layer type " << type << " already registered.";
     registry[type] = creator;
   }
@@ -54,7 +54,7 @@ class LayerRegistry {
     }
     const string &type = param.type();
     CreatorRegistry &registry = Registry();
-    CHECK_EQ(registry.count(type), 1)
+    CHECK_EQ(registry.count(type), static_cast<size_t>(1))
         << "Unknown layer type: " << type
         << " (known types: " << LayerTypeListString() << ")";
     return registry[type](param);

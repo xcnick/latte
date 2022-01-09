@@ -35,7 +35,7 @@ class SoftmaxLayerTest : public MultiDeviceTest<TypeParam> {
   vector<Blob<Dtype> *> blob_top_vec_;
 };
 
-TYPED_TEST_CASE(SoftmaxLayerTest, TestDtypesAndDevices);
+TYPED_TEST_SUITE(SoftmaxLayerTest, TestDtypesAndDevices);
 
 TYPED_TEST(SoftmaxLayerTest, TestForward) {
   using Dtype = typename TypeParam::Dtype;
@@ -94,7 +94,7 @@ class CuDNNSoftmaxLayerTest : public GPUDeviceTest<Dtype> {
   vector<Blob<Dtype> *> blob_top_vec_;
 };
 
-TYPED_TEST_CASE(CuDNNSoftmaxLayerTest, TestDtypes);
+TYPED_TEST_SUITE(CuDNNSoftmaxLayerTest, TestDtypes);
 
 TYPED_TEST(CuDNNSoftmaxLayerTest, TestForwardCuDNN) {
   LayerParameter layer_param;

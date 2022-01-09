@@ -7,14 +7,14 @@ namespace latte {
 
 template <typename Dtype>
 void Blob<Dtype>::Reshape(const vector<int> &shape) {
-  CHECK_LE(shape.size(), kMaxBlobAxes);
+  CHECK_LE(static_cast<int>(shape.size()), kMaxBlobAxes);
   count_ = 1;
   shape_.resize(shape.size());
   if (!shape_data_ || shape_data_->size() < shape.size() * sizeof(int)) {
     shape_data_.reset(new SyncedMemory(shape.size() * sizeof(int)));
   }
   int *shape_data = reinterpret_cast<int *>(shape_data_->mutable_cpu_data());
-  for (int i = 0; i < shape.size(); ++i) {
+  for (size_t i = 0; i < shape.size(); ++i) {
     CHECK_GE(shape[i], 0);
     if (count_ != 0) {
       CHECK_LE(shape[i], INT_MAX / count_) << "blob size exceeds INT_MAX";
@@ -487,7 +487,7 @@ void Blob<Dtype>::FromProto(const BlobProto &proto, bool reshape) {
 template <>
 void Blob<float>::ToProto(BlobProto *proto, bool write_diff) const {
   proto->clear_shape();
-  for (int i = 0; i < shape_.size(); ++i) {
+  for (size_t i = 0; i < shape_.size(); ++i) {
     proto->mutable_shape()->add_dim(shape_[i]);
   }
   proto->clear_data();
@@ -507,7 +507,7 @@ void Blob<float>::ToProto(BlobProto *proto, bool write_diff) const {
 template <>
 void Blob<double>::ToProto(BlobProto *proto, bool write_diff) const {
   proto->clear_shape();
-  for (int i = 0; i < shape_.size(); ++i) {
+  for (size_t i = 0; i < shape_.size(); ++i) {
     proto->mutable_shape()->add_dim(shape_[i]);
   }
   proto->clear_double_data();

@@ -76,12 +76,13 @@ class Layer : public Noncopyable {
 
   // 返回某个Top Blob相关的标量loss值
   inline Dtype loss(const int top_index) const {
-    return (loss_.size() > top_index) ? loss_[top_index] : Dtype(0);
+    return (static_cast<int>(loss_.size()) > top_index) ? loss_[top_index]
+                                                        : Dtype(0);
   }
 
   // 设置与某个Top Blob相关的标量loss值
   inline void set_loss(const int top_index, const Dtype value) {
-    if (loss_.size() <= top_index) {
+    if (static_cast<int>(loss_.size()) <= top_index) {
       loss_.resize(top_index + 1, Dtype(0));
     }
     loss_[top_index] = value;
@@ -121,14 +122,14 @@ class Layer : public Noncopyable {
 
   // 指定该layer是否计算相对权值或偏置项的梯度，由param_id指定相对
   inline bool param_propagate_down(const int param_id) {
-    return (param_propagate_down_.size() > param_id)
+    return (static_cast<int>(param_propagate_down_.size()) > param_id)
                ? param_propagate_down_[param_id]
                : false;
   }
 
   // 设置该层是否计算相对权值或偏置项的梯度，由param_id指定相对
   inline void set_param_propagate_down(const int param_id, const bool value) {
-    if (param_propagate_down_.size() <= param_id) {
+    if (static_cast<int>(param_propagate_down_.size()) <= param_id) {
       param_propagate_down_.resize(param_id + 1, true);
     }
     param_propagate_down_[param_id] = value;
@@ -169,32 +170,32 @@ class Layer : public Noncopyable {
   virtual void CheckBlobCounts(const vector<Blob<Dtype> *> &bottom,
                                const vector<Blob<Dtype> *> &top) {
     if (ExactNumBottomBlobs() >= 0) {
-      CHECK_EQ(ExactNumBottomBlobs(), bottom.size())
+      CHECK_EQ(ExactNumBottomBlobs(), static_cast<int>(bottom.size()))
           << type() << " Layer takes" << ExactNumBottomBlobs()
           << " bottom blob(s) as input.";
     }
     if (MinBottomBlobs() >= 0) {
-      CHECK_LE(MinBottomBlobs(), bottom.size())
+      CHECK_LE(MinBottomBlobs(), static_cast<int>(bottom.size()))
           << type() << " Layer takes at least " << MinBottomBlobs()
           << " bottom blob(s) as input.";
     }
     if (MaxBottomBlobs() >= 0) {
-      CHECK_GE(MaxBottomBlobs(), bottom.size())
+      CHECK_GE(MaxBottomBlobs(), static_cast<int>(bottom.size()))
           << type() << " Layer takes at least " << MaxBottomBlobs()
           << " bottom blob(s) as input.";
     }
     if (ExactNumTopBlobs() >= 0) {
-      CHECK_EQ(ExactNumTopBlobs(), top.size())
+      CHECK_EQ(ExactNumTopBlobs(), static_cast<int>(top.size()))
           << type() << " Layer produces " << ExactNumTopBlobs()
           << " top blob(s) as output.";
     }
     if (MinTopBlobs() >= 0) {
-      CHECK_LE(MinTopBlobs(), top.size())
+      CHECK_LE(MinTopBlobs(), static_cast<int>(top.size()))
           << type() << " Layer produces at least " << MinTopBlobs()
           << " top blob(s) as output.";
     }
     if (MaxTopBlobs() >= 0) {
-      CHECK_GE(MaxTopBlobs(), top.size())
+      CHECK_GE(MaxTopBlobs(), static_cast<int>(top.size()))
           << type() << " Layer produces at most " << MaxTopBlobs()
           << " top blob(s) as output.";
     }
@@ -210,10 +211,10 @@ class Layer : public Noncopyable {
   inline void SetLossWeights(const vector<Blob<Dtype> *> &top) {
     const int num_loss_weights = layer_param_.loss_weight_size();
     if (num_loss_weights) {
-      CHECK_EQ(top.size(), num_loss_weights)
+      CHECK_EQ(static_cast<int>(top.size()), num_loss_weights)
           << "loss_weight must be "
              "unspecified or specified once per top blob.";
-      for (int top_id = 0; top_id < top.size(); ++top_id) {
+      for (size_t top_id = 0; top_id < top.size(); ++top_id) {
         const Dtype loss_weight = layer_param_.loss_weight(top_id);
         if (loss_weight == Dtype(0)) {
           continue;
@@ -235,7 +236,7 @@ inline Dtype Layer<Dtype>::Forward(const vector<Blob<Dtype> *> &bottom,
   switch (Latte::mode()) {
     case Latte::CPU:
       Forward_cpu(bottom, top);
-      for (int top_id = 0; top_id < top.size(); ++top_id) {
+      for (size_t top_id = 0; top_id < top.size(); ++top_id) {
         if (!this->loss(top_id)) {
           continue;
         }
@@ -248,7 +249,7 @@ inline Dtype Layer<Dtype>::Forward(const vector<Blob<Dtype> *> &bottom,
     case Latte::GPU:
       Forward_gpu(bottom, top);
 #ifdef WITH_CUDA
-      for (int top_id = 0; top_id < top.size(); ++top_id) {
+      for (size_t top_id = 0; top_id < top.size(); ++top_id) {
         if (!this->loss(top_id)) {
           continue;
         }
@@ -288,7 +289,7 @@ void Layer<Dtype>::ToProto(LayerParameter *param, bool write_diff) {
   param->Clear();
   param->CopyFrom(layer_param_);
   param->clear_blobs();
-  for (int i = 0; i < blobs_.size(); ++i) {
+  for (size_t i = 0; i < blobs_.size(); ++i) {
     blobs_[i]->ToProto(param->add_blobs(), write_diff);
   }
 }
