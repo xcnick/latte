@@ -21,13 +21,6 @@ class SigmoidLayer : public NeuronLayer<Dtype> {
                            const vector<Blob<Dtype> *> &top) override;
   virtual void Forward_gpu(const vector<Blob<Dtype> *> &bottom,
                            const vector<Blob<Dtype> *> &top) override;
-
-  virtual void Backward_cpu(const vector<Blob<Dtype> *> &top,
-                            const vector<bool> &propagate_down,
-                            const vector<Blob<Dtype> *> &bottom) override;
-  virtual void Backward_gpu(const vector<Blob<Dtype> *> &top,
-                            const vector<bool> &propagate_down,
-                            const vector<Blob<Dtype> *> &bottom) override;
 };
 }  // namespace latte
 

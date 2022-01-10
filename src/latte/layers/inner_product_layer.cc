@@ -62,7 +62,6 @@ void InnerProductLayer<Dtype>::LayerSetUp(const vector<Blob<Dtype> *> &bottom,
       bias_filler->Fill(this->blobs_[1].get());
     }
   }
-  this->param_propagate_down_.resize(this->blobs_.size(), true);
 }
 
 template <typename Dtype>
@@ -115,46 +114,6 @@ void InnerProductLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype> *> &bottom,
   }
 }
 
-template <typename Dtype>
-void InnerProductLayer<Dtype>::Backward_cpu(
-    const vector<Blob<Dtype> *> &top, const vector<bool> &propagate_down,
-    const vector<Blob<Dtype> *> &bottom) {
-  if (this->param_propagate_down_[0]) {
-    const Dtype *top_diff = top[0]->cpu_diff();
-    const Dtype *bottom_data = bottom[0]->cpu_data();
-    // weight_diff (N * K) += top_diff' (N * M) * bottom_data (M * K)
-    if (transpose_) {
-      latte_cpu_gemm<Dtype>(CblasTrans, CblasNoTrans, K_, N_, M_, (Dtype)1.,
-                            bottom_data, top_diff, (Dtype)1.,
-                            this->blobs_[0]->mutable_cpu_diff());
-    } else {
-      latte_cpu_gemm<Dtype>(CblasTrans, CblasNoTrans, N_, K_, M_, (Dtype)1.,
-                            top_diff, bottom_data, (Dtype)1.,
-                            this->blobs_[0]->mutable_cpu_diff());
-    }
-
-    if (bias_term_ && this->param_propagate_down_[1]) {
-      const Dtype *top_diff = top[0]->cpu_diff();
-      // bias_diff (N * 1) = top_diff' (N * M) * bias_multi (M * 1)
-      latte_cpu_gemv<Dtype>(CblasTrans, M_, N_, (Dtype)1., top_diff,
-                            bias_multiplier_.cpu_data(), (Dtype)1.,
-                            this->blobs_[1]->mutable_cpu_diff());
-    }
-    if (propagate_down[0]) {
-      const Dtype *top_diff = top[0]->cpu_diff();
-      // bottom_diff (M * K) = top_diff (M * N) * weight (N * K)
-      if (transpose_) {
-        latte_cpu_gemm<Dtype>(CblasNoTrans, CblasTrans, M_, K_, N_, (Dtype)1.,
-                              top_diff, this->blobs_[0]->cpu_data(), (Dtype)0.,
-                              bottom[0]->mutable_cpu_diff());
-      } else {
-        latte_cpu_gemm<Dtype>(CblasNoTrans, CblasNoTrans, M_, K_, N_, (Dtype)1.,
-                              top_diff, this->blobs_[0]->cpu_data(), (Dtype)0.,
-                              bottom[0]->mutable_cpu_diff());
-      }
-    }
-  }
-}
 
 #ifndef WITH_CUDA
 STUB_GPU(InnerProductLayer);

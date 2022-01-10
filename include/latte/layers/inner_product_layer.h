@@ -28,13 +28,6 @@ class InnerProductLayer : public Layer<Dtype> {
   virtual void Forward_gpu(const vector<Blob<Dtype> *> &bottom,
                            const vector<Blob<Dtype> *> &top);
 
-  virtual void Backward_cpu(const vector<Blob<Dtype> *> &top,
-                            const vector<bool> &propagate_down,
-                            const vector<Blob<Dtype> *> &bottom);
-  virtual void Backward_gpu(const vector<Blob<Dtype> *> &top,
-                            const vector<bool> &propagate_down,
-                            const vector<Blob<Dtype> *> &bottom);
-
   // 矩阵乘法参数(M, K) * (K, N) = (M, N)
   int M_;  // 输入数据的数量, 即batch_size
   int K_;  // 单个输入数据包含的元素个数 C * H * W，特征维度

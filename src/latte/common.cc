@@ -32,12 +32,7 @@ void GlobalInit(int *pargc, char ***pargv) {
 
 #ifndef WITH_CUDA  // CPU-only Latte.
 
-Latte::Latte()
-    : random_generator_(),
-      mode_(Latte::CPU),
-      solver_count_(1),
-      solver_rank_(0),
-      multiprocess_(false) {}
+Latte::Latte() : random_generator_(), mode_(Latte::CPU) {}
 
 Latte::~Latte() {}
 
@@ -87,10 +82,7 @@ Latte::Latte()
     : cublas_handle_(NULL),
       curand_generator_(NULL),
       random_generator_(),
-      mode_(Latte::CPU),
-      solver_count_(1),
-      solver_rank_(0),
-      multiprocess_(false) {
+      mode_(Latte::CPU) {
   // Try to create a cublas handler, and report an error if failed (but we will
   // keep the program running as one might just want to run CPU code).
   if (cublasCreate(&cublas_handle_) != CUBLAS_STATUS_SUCCESS) {
@@ -300,4 +292,4 @@ const char *curandGetErrorString(curandStatus_t error) {
 
 #endif  // WITH_CUDA
 
-}  // namespace Latte
+}  // namespace latte
