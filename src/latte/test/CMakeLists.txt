@@ -12,7 +12,7 @@ target_sources(test_latte
     test_inner_product_layer.cc
     test_latte_main.cc
     test_layer_factory.cc
-    #test_net.cc
+    test_net.cc
     test_softmax_layer.cc
     test_syncedmem.cc
 )

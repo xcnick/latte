@@ -9,7 +9,7 @@ namespace latte {
 template <typename TypeParam>
 class LayerFactoryTest : public MultiDeviceTest<TypeParam> {};
 
-TYPED_TEST_CASE(LayerFactoryTest, TestDtypesAndDevices);
+TYPED_TEST_SUITE(LayerFactoryTest, TestDtypesAndDevices);
 
 TYPED_TEST(LayerFactoryTest, TestCreateLayer) {
   using Dtype = typename TypeParam::Dtype;

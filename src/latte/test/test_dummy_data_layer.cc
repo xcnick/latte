@@ -34,7 +34,7 @@ class DummyDataLayerTest : public CPUDeviceTest<Dtype> {
   vector<Blob<Dtype> *> blob_top_vec_;
 };
 
-TYPED_TEST_CASE(DummyDataLayerTest, TestDtypes);
+TYPED_TEST_SUITE(DummyDataLayerTest, TestDtypes);
 
 TYPED_TEST(DummyDataLayerTest, TestOneTopConstant) {
   LayerParameter param;
@@ -53,13 +53,13 @@ TYPED_TEST(DummyDataLayerTest, TestOneTopConstant) {
   EXPECT_EQ(this->blob_top_a_->shape(3), 4);
   EXPECT_EQ(this->blob_top_b_->count(), 0);
   EXPECT_EQ(this->blob_top_c_->count(), 0);
-  for (int i = 0; i < this->blob_top_vec_.size(); ++i) {
+  for (size_t i = 0; i < this->blob_top_vec_.size(); ++i) {
     for (int j = 0; j < this->blob_top_vec_[i]->count(); ++j) {
       EXPECT_EQ(0, this->blob_top_vec_[i]->cpu_data()[j]);
     }
   }
   layer.Forward(this->blob_bottom_vec_, this->blob_top_vec_);
-  for (int i = 0; i < this->blob_top_vec_.size(); ++i) {
+  for (size_t i = 0; i < this->blob_top_vec_.size(); ++i) {
     for (int j = 0; j < this->blob_top_vec_[i]->count(); ++j) {
       EXPECT_EQ(0, this->blob_top_vec_[i]->cpu_data()[j]);
     }
@@ -94,13 +94,13 @@ TYPED_TEST(DummyDataLayerTest, TestTwoTopConstant) {
   EXPECT_EQ(this->blob_top_b_->shape(2), 1);
   EXPECT_EQ(this->blob_top_b_->shape(3), 4);
   EXPECT_EQ(this->blob_top_c_->count(), 0);
-  for (int i = 0; i < this->blob_top_vec_.size(); ++i) {
+  for (size_t i = 0; i < this->blob_top_vec_.size(); ++i) {
     for (int j = 0; j < this->blob_top_vec_[i]->count(); ++j) {
       EXPECT_EQ(7, this->blob_top_vec_[i]->cpu_data()[j]);
     }
   }
   layer.Forward(this->blob_bottom_vec_, this->blob_top_vec_);
-  for (int i = 0; i < this->blob_top_vec_.size(); ++i) {
+  for (size_t i = 0; i < this->blob_top_vec_.size(); ++i) {
     for (int j = 0; j < this->blob_top_vec_[i]->count(); ++j) {
       EXPECT_EQ(7, this->blob_top_vec_[i]->cpu_data()[j]);
     }

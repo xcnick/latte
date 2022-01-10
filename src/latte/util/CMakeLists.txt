@@ -1,4 +1,4 @@
-# --[ Latte layers library
+# --[ Latte util library
 add_library(latte_util STATIC)
 target_sources(latte_util
   PRIVATE

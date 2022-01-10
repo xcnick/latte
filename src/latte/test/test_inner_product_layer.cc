@@ -34,7 +34,7 @@ class InnerProductLayerTest : public MultiDeviceTest<TypeParam> {
   vector<Blob<Dtype> *> blob_top_vec_;
 };
 
-TYPED_TEST_CASE(InnerProductLayerTest, TestDtypesAndDevices);
+TYPED_TEST_SUITE(InnerProductLayerTest, TestDtypesAndDevices);
 
 TYPED_TEST(InnerProductLayerTest, TestSetUp) {
   using Dtype = typename TypeParam::Dtype;

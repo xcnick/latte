@@ -29,7 +29,7 @@ class ConstantFillerTest : public ::testing::Test {
   shared_ptr<ConstantFiller<Dtype>> filler_;
 };
 
-TYPED_TEST_CASE(ConstantFillerTest, TestDtypes);
+TYPED_TEST_SUITE(ConstantFillerTest, TestDtypes);
 
 TYPED_TEST(ConstantFillerTest, TestFill) {
   vector<int> blob_shape;
