@@ -21,8 +21,8 @@ if (BUILD_CUDA)
   )
 endif()
 
-target_include_directories(latte_layers PUBLIC ${Latte_INCLUDE_DIRS})
-target_link_libraries(latte_layers PUBLIC ${Latte_LINKER_LIBS})
+target_include_directories(latte_layers PRIVATE ${Latte_INCLUDE_DIRS})
+target_link_libraries(latte_layers PRIVATE ${Latte_LINKER_LIBS})
 
 target_compile_definitions(latte_layers PRIVATE ${Latte_DEFINITIONS})
 if(Latte_COMPILE_OPTIONS)

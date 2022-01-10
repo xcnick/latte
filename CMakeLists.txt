@@ -36,29 +36,12 @@ set(latte_cmake_dir ${PROJECT_SOURCE_DIR}/cmake)
 # ---[ Using cmake scripts and modules
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/External)
 
-
 # ---[ Options
-
 option(BUILD_CUDA "" ON)
 if (BUILD_CUDA)
   option(USE_CUDNN "Build Latte with cuDNN library support" ON)
 endif()
 option(USE_OPENMP "" ON)
-#latte_option(CPU_ONLY  "Build Latte without CUDA support" OFF) # TODO: rename to USE_CUDA
-#latte_option(USE_CUDNN "Build Latte with cuDNN library support" ON IF NOT CPU_ONLY)
-# latte_option(USE_NCCL "Build Latte with NCCL library support" OFF)
-# latte_option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-# latte_option(BUILD_matlab "Build Matlab wrapper" OFF IF UNIX OR APPLE)
-# latte_option(BUILD_docs   "Build documentation" ON IF UNIX OR APPLE)
-# latte_option(BUILD_python_layer "Build the Latte Python layer" ON)
-# latte_option(USE_OPENCV "Build with OpenCV support" ON)
-# latte_option(USE_LEVELDB "Build with levelDB" ON)
-# latte_option(USE_LMDB "Build with lmdb" ON)
-# latte_option(ALLOW_LMDB_NOLOCK "Allow MDB_NOLOCK when reading LMDB files (only if necessary)" OFF)
-# latte_option(USE_OPENMP "Link with OpenMP (when your BLAS wants OpenMP and you get linker errors)" OFF)
-
-# This code is taken from https://github.com/sh1r0/latte-android-lib
-# latte_option(USE_HDF5 "Build with hdf5" ON)
 
 set(Latte_INCLUDE_DIRS "")
 set(Latte_LINKER_LIBS "")
@@ -74,7 +57,6 @@ include(cmake/third_party.cmake)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
 
 if (BUILD_CUDA)
   # NOTE: if you want to use source PTX with a version different from produced PTX/binary, you should add flags
@@ -119,11 +101,6 @@ if (BUILD_CUDA)
   endif()
 endif()
 
-
 # ---[ Subdirectories
 add_subdirectory(src/latte)
 add_subdirectory(tools)
-# add_subdirectory(examples)
-# add_subdirectory(python)
-# add_subdirectory(matlab)
-# add_subdirectory(docs)
