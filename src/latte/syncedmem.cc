@@ -1,5 +1,4 @@
 #include "latte/syncedmem.h"
-#include <cstdlib>
 #include "latte/util/math_functions.h"
 
 namespace latte {

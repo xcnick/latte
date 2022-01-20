@@ -14,15 +14,7 @@
 using std::cout;
 using std::endl;
 
-#ifdef CMAKE_BUILD
-#include "latte_config.h"
-#else
 #define CUDA_TEST_DEVICE -1
-#define EXAMPLES_SOURCE_DIR "examples/"
-#define ABS_TEST_DATA_DIR "src/latte/test/test_data"
-#endif
-
-int main(int argc, char **argv);
 
 namespace latte {
 

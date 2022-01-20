@@ -1,7 +1,6 @@
 #ifndef LATTE_BLOB_H_
 #define LATTE_BLOB_H_
 
-//#include <algorithm>
 #include <string>
 #include <vector>
 
