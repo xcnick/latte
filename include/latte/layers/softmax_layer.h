@@ -30,13 +30,6 @@ class SoftmaxLayer : public Layer<Dtype> {
   virtual void Forward_gpu(const vector<Blob<Dtype> *> &bottom,
                            const vector<Blob<Dtype> *> &top);
 
-  virtual void Backward_cpu(const vector<Blob<Dtype> *> &top,
-                            const vector<bool> &propagate_down,
-                            const vector<Blob<Dtype> *> &bottom);
-  virtual void Backward_gpu(const vector<Blob<Dtype> *> &top,
-                            const vector<bool> &propagate_down,
-                            const vector<Blob<Dtype> *> &bottom);
-
   int outer_num_;     // 外层个数，即batch_size
   int inner_num_;     // 内层个数，默认1
   int softmax_axis_;  // 默认1

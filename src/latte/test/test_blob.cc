@@ -78,7 +78,6 @@ TYPED_TEST(BlobMathTest, TestSumOfSquares) {
   using Dtype = typename TypeParam::Dtype;
 
   EXPECT_EQ(0, this->blob_->sumsq_data());
-  EXPECT_EQ(0, this->blob_->sumsq_diff());
   FillerParameter filler_param;
   filler_param.set_min(-3);
   filler_param.set_max(3);
@@ -101,35 +100,12 @@ TYPED_TEST(BlobMathTest, TestSumOfSquares) {
   }
   EXPECT_NEAR(expected_sumsq, this->blob_->sumsq_data(),
               this->epsilon_ * expected_sumsq);
-  EXPECT_EQ(0, this->blob_->sumsq_diff());
-
-  // Check sumsq
-  const Dtype kDiffScaleFactor = 7;
-  latte_cpu_scale(this->blob_->count(), kDiffScaleFactor, data,
-                  this->blob_->mutable_cpu_diff());
-  switch (TypeParam::device) {
-    case Latte::CPU:
-      this->blob_->mutable_cpu_diff();
-      break;
-    case Latte::GPU:
-      this->blob_->mutable_gpu_diff();
-      break;
-    default:
-      LOG(FATAL) << "Unknown device: " << TypeParam::device;
-  }
-  EXPECT_NEAR(expected_sumsq, this->blob_->sumsq_data(),
-              this->epsilon_ * expected_sumsq);
-  const Dtype expected_sumsq_diff =
-      expected_sumsq * kDiffScaleFactor * kDiffScaleFactor;
-  EXPECT_NEAR(expected_sumsq_diff, this->blob_->sumsq_diff(),
-              this->epsilon_ * expected_sumsq_diff);
 }
 
 TYPED_TEST(BlobMathTest, TestAsum) {
   using Dtype = typename TypeParam::Dtype;
 
   EXPECT_EQ(0, this->blob_->asum_data());
-  EXPECT_EQ(0, this->blob_->asum_diff());
   FillerParameter filler_param;
   filler_param.set_min(-3);
   filler_param.set_max(3);
@@ -152,34 +128,12 @@ TYPED_TEST(BlobMathTest, TestAsum) {
   }
   EXPECT_NEAR(expected_asum, this->blob_->asum_data(),
               this->epsilon_ * expected_asum);
-  EXPECT_EQ(0, this->blob_->asum_diff());
-
-  // check diff
-  const Dtype kDiffScaleFactor = 7;
-  latte_cpu_scale(this->blob_->count(), kDiffScaleFactor, data,
-                  this->blob_->mutable_cpu_diff());
-  switch (TypeParam::device) {
-    case Latte::CPU:
-      this->blob_->mutable_cpu_diff();
-      break;
-    case Latte::GPU:
-      this->blob_->mutable_gpu_diff();
-      break;
-    default:
-      LOG(FATAL) << "Unknown device: " << TypeParam::device;
-  }
-  EXPECT_NEAR(expected_asum, this->blob_->asum_data(),
-              this->epsilon_ * expected_asum);
-  const Dtype expected_diff_asum = expected_asum * kDiffScaleFactor;
-  EXPECT_NEAR(expected_diff_asum, this->blob_->asum_diff(),
-              this->epsilon_ * expected_diff_asum);
 }
 
 TYPED_TEST(BlobMathTest, TestScale) {
   using Dtype = typename TypeParam::Dtype;
 
   EXPECT_EQ(0, this->blob_->asum_data());
-  EXPECT_EQ(0, this->blob_->asum_diff());
   FillerParameter filler_param;
   filler_param.set_min(-3);
   filler_param.set_max(3);
@@ -200,38 +154,6 @@ TYPED_TEST(BlobMathTest, TestScale) {
   this->blob_->scale_data(kDataScaleFactor);
   EXPECT_NEAR(asum_before_scale * kDataScaleFactor, this->blob_->asum_data(),
               this->epsilon_ * asum_before_scale * kDataScaleFactor);
-  EXPECT_EQ(0, this->blob_->asum_diff());
-
-  // check diff
-  const Dtype kDataToDiffScaleFactor = 7;
-  const Dtype *data = this->blob_->cpu_data();
-  latte_cpu_scale(this->blob_->count(), kDataToDiffScaleFactor, data,
-                  this->blob_->mutable_cpu_diff());
-  const Dtype expected_asum_before_scale = asum_before_scale * kDataScaleFactor;
-  EXPECT_NEAR(expected_asum_before_scale, this->blob_->asum_data(),
-              this->epsilon_ * expected_asum_before_scale);
-  const Dtype expected_diff_asum_before_scale =
-      asum_before_scale * kDataScaleFactor * kDataToDiffScaleFactor;
-  EXPECT_NEAR(expected_diff_asum_before_scale, this->blob_->asum_diff(),
-              this->epsilon_ * expected_diff_asum_before_scale);
-  switch (TypeParam::device) {
-    case Latte::CPU:
-      this->blob_->mutable_cpu_diff();
-      break;
-    case Latte::GPU:
-      this->blob_->mutable_gpu_diff();
-      break;
-    default:
-      LOG(FATAL) << "Unknown device: " << TypeParam::device;
-  }
-  const Dtype kDiffScaleFactor = 3;
-  this->blob_->scale_diff(kDiffScaleFactor);
-  EXPECT_NEAR(asum_before_scale * kDiffScaleFactor, this->blob_->asum_data(),
-              this->epsilon_ * asum_before_scale * kDiffScaleFactor);
-  const Dtype expected_diff_asum =
-      expected_diff_asum_before_scale * kDiffScaleFactor;
-  EXPECT_NEAR(expected_diff_asum, this->blob_->asum_diff(),
-              this->epsilon_ * expected_diff_asum);
 }
 
 }  // namespace latte

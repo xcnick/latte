@@ -12,9 +12,7 @@ message BlobShape {
 message BlobProto {
   BlobShape shape = 1;
   repeated float data = 2;
-  repeated float diff = 3;
-  repeated double double_data = 4;
-  repeated double double_diff = 5;
+  repeated double double_data = 3;
 }
 
 // The BlobProtoVector is simply a way to pass multiple blobproto instances
@@ -66,237 +64,35 @@ message FillerParameter {
 
 message NetParameter {
   string name = 1; // consider giving the network a name
-
-  // Whether the network will force every layer to carry out backward operation.
-  // If set False, then whether to carry out backward is determined
-  // automatically according to the net structure and learning rates.
-  bool force_backward = 2;
-  // The current "state" of the network, including the phase, level, and stage.
+  // The current "state" of the network, including the level, and stage.
   // Some layers may be included/excluded depending on this state and the states
   // specified in the layers' include and exclude fields.
-  NetState state = 3;
+  NetState state = 2;
   // Print debugging information about results while running Net::Forward,
-  // Net::Backward, and Net::Update.
-  google.protobuf.BoolValue debug_info = 4;
+  google.protobuf.BoolValue debug_info = 3;
 
   // The layers that make up the net.  Each of their configurations, including
   // connectivity and behavior, is specified as a LayerParameter.
   repeated LayerParameter layer = 100;  // ID 100 so layers are printed last.
 }
 
-// NOTE
-// Update the next available ID when you add a new SolverParameter field.
-//
-// SolverParameter next available ID: 43 (last added: weights)
-message SolverParameter {
-  //////////////////////////////////////////////////////////////////////////////
-  // Specifying the train and test networks
-  //
-  // Exactly one train net must be specified using one of the following fields:
-  //     train_net_param, train_net, net_param, net
-  // One or more test nets may be specified using any of the following fields:
-  //     test_net_param, test_net, net_param, net
-  // If more than one test net field is specified (e.g., both net and
-  // test_net are specified), they will be evaluated in the field order given
-  // above: (1) test_net_param, (2) test_net, (3) net_param/net.
-  // A test_iter must be specified for each test_net.
-  // A test_level and/or a test_stage may also be specified for each test_net.
-  //////////////////////////////////////////////////////////////////////////////
-
-  // Proto filename for the train net, possibly combined with one or more
-  // test nets.
-  string net = 24;
-  // Inline train net param, possibly combined with one or more test nets.
-  NetParameter net_param = 25;
-
-  string train_net = 1; // Proto filename for the train net.
-  repeated string test_net = 2; // Proto filenames for the test nets.
-  NetParameter train_net_param = 21; // Inline train net params.
-  repeated NetParameter test_net_param = 22; // Inline test net params.
-
-  // The states for the train/test nets. Must be unspecified or
-  // specified once per net.
-  //
-  // By default, train_state will have phase = TRAIN,
-  // and all test_state's will have phase = TEST.
-  // Other defaults are set according to the NetState defaults.
-  NetState train_state = 26;
-  repeated NetState test_state = 27;
-
-  // The number of iterations for each test net.
-  repeated int32 test_iter = 3;
-
-  // The number of iterations between two testing phases.
-  int32 test_interval = 4;
-  bool test_compute_loss = 19;
-  // If true, run an initial test pass before the first iteration,
-  // ensuring memory availability and printing the starting value of the loss.
-  bool test_initialization = 32;
-  float base_lr = 5; // The base learning rate
-  // the number of iterations between displaying info. If display = 0, no info
-  // will be displayed.
-  int32 display = 6;
-  // Display the loss averaged over the last average_loss iterations
-  int32 average_loss = 33;
-  int32 max_iter = 7; // the maximum number of iterations
-  // accumulate gradients over `iter_size` x `batch_size` instances
-  int32 iter_size = 36;
-
-  // The learning rate decay policy. The currently implemented learning rate
-  // policies are as follows:
-  //    - fixed: always return base_lr.
-  //    - step: return base_lr * gamma ^ (floor(iter / step))
-  //    - exp: return base_lr * gamma ^ iter
-  //    - inv: return base_lr * (1 + gamma * iter) ^ (- power)
-  //    - multistep: similar to step but it allows non uniform steps defined by
-  //      stepvalue
-  //    - poly: the effective learning rate follows a polynomial decay, to be
-  //      zero by the max_iter. return base_lr (1 - iter/max_iter) ^ (power)
-  //    - sigmoid: the effective learning rate follows a sigmod decay
-  //      return base_lr ( 1/(1 + exp(-gamma * (iter - stepsize))))
-  //
-  // where base_lr, max_iter, gamma, step, stepvalue and power are defined
-  // in the solver parameter protocol buffer, and iter is the current iteration.
-  string lr_policy = 8;
-  float gamma = 9; // The parameter to compute the learning rate.
-  float power = 10; // The parameter to compute the learning rate.
-  float momentum = 11; // The momentum value.
-  float weight_decay = 12; // The weight decay.
-  // regularization types supported: L1 and L2
-  // controlled by weight_decay
-  string regularization_type = 29;
-  // the stepsize for learning rate policy "step"
-  int32 stepsize = 13;
-  // the stepsize for learning rate policy "multistep"
-  repeated int32 stepvalue = 34;
-
-  // Set clip_gradients to >= 0 to clip parameter gradients to that L2 norm,
-  // whenever their actual L2 norm is larger.
-  float clip_gradients = 35;
-
-  int32 snapshot = 14; // The snapshot interval
-  // The prefix for the snapshot.
-  // If not set then is replaced by prototxt file path without extension.
-  // If is set to directory then is augmented by prototxt file name
-  // without extention.
-  string snapshot_prefix = 15;
-  // whether to snapshot diff in the results or not. Snapshotting diff will help
-  // debugging but the final protocol buffer size will be much larger.
-  bool snapshot_diff = 16;
-  enum SnapshotFormat {
-    BINARYPROTO = 0;
-  }
-  SnapshotFormat snapshot_format = 37;
-  // the mode solver will use: 0 for CPU and 1 for GPU. Use GPU in default.
-  enum SolverMode {
-    CPU = 0;
-    GPU = 1;
-  }
-  SolverMode solver_mode = 17;
-  // the device_id will that be used in GPU mode. Use device_id = 0 in default.
-  int32 device_id = 18;
-  // If non-negative, the seed with which the Solver will initialize the Latte
-  // random number generator -- useful for reproducible results. Otherwise,
-  // (and by default) initialize using a seed derived from the system clock.
-  int64 random_seed = 20;
-
-  // type of the solver
-  string type = 40;
-
-  // numerical stability for RMSProp, AdaGrad and AdaDelta and Adam
-  float delta = 31;
-  // parameters for the Adam solver
-  float momentum2 = 39;
-
-  // RMSProp decay value
-  // MeanSquare(t) = rms_decay*MeanSquare(t-1) + (1-rms_decay)*SquareGradient(t)
-  float rms_decay = 38;
-
-  // If true, print information about the state of the net that may help with
-  // debugging learning problems.
-  bool debug_info = 23;
-
-  // If false, don't save a snapshot after training finishes.
-  bool snapshot_after_train = 28;
-
-  // Overlap compute and communication for data parallel training
-  bool layer_wise_reduce = 41;
-
-  // Path to caffemodel file(s) with pretrained weights to initialize finetuning.
-  // Tha same as command line --weights parameter for latte train command.
-  // If command line --weights parameter is specified, it has higher priority
-  // and overwrites this one(s).
-  // If --snapshot command line parameter is specified, this one(s) are ignored.
-  // If several model files are expected, they can be listed in a one
-  // weights parameter separated by ',' (like in a command string) or
-  // in repeated weights parameters separately.
-  repeated string weights = 42;
-}
-
-// A message that stores the solver snapshots
-message SolverState {
-  int32 iter = 1; // The current iteration
-  string learned_net = 2; // The file that stores the learned net.
-  repeated BlobProto history = 3; // The history for sgd solvers
-  int32 current_step = 4; // The current step for learning rate
-}
-
-enum Phase {
-   TRAIN = 0;
-   TEST = 1;
-}
-
 message NetState {
-  Phase phase = 1;
   int32 level = 2;
   repeated string stage = 3;
 }
 
 message NetStateRule {
-  // Set phase to require the NetState have a particular phase (TRAIN or TEST)
-  // to meet this rule.
-  Phase phase = 1;
-
   // Set the minimum and/or maximum levels in which the layer should be used.
   // Leave undefined to meet the rule regardless of level.
-  google.protobuf.Int32Value min_level = 2;
-  google.protobuf.Int32Value max_level = 3;
+  google.protobuf.Int32Value min_level = 1;
+  google.protobuf.Int32Value max_level = 2;
 
   // Customizable sets of stages to include or exclude.
   // The net must have ALL of the specified stages and NONE of the specified
   // "not_stage"s to meet the rule.
   // (Use multiple NetStateRules to specify conjunctions of stages.)
-  repeated string stage = 4;
-  repeated string not_stage = 5;
-}
-
-// Specifies training parameters (multipliers on global learning constants,
-// and the name and other settings used for weight sharing).
-message ParamSpec {
-  // The names of the parameter blobs -- useful for sharing parameters among
-  // layers, but never required otherwise.  To share a parameter between two
-  // layers, give it a (non-empty) name.
-  string name = 1;
-
-  // Whether to require shared weights to have the same shape, or just the same
-  // count -- defaults to STRICT if unspecified.
-  DimCheckMode share_mode = 2;
-  enum DimCheckMode {
-    // STRICT (default) requires that num, channels, height, width each match.
-    STRICT = 0;
-    // PERMISSIVE requires only the count (num*channels*height*width) to match.
-    PERMISSIVE = 1;
-  }
-
-  // The multiplier on the global learning rate for this parameter.
-  oneof lr_mult_oneof {
-    float lr_mult = 3;
-  }
-
-  // The multiplier on the global weight decay for this parameter.
-  oneof decay_mult_oneof {
-    float decay_mult = 4;
-  }
+  repeated string stage = 3;
+  repeated string not_stage = 4;
 }
 
 // NOTE
@@ -309,29 +105,8 @@ message LayerParameter {
   repeated string bottom = 3; // the name of each bottom blob
   repeated string top = 4; // the name of each top blob
 
-  // The train / test phase for computation.
-  Phase phase = 10;
-
-  // The amount of weight to assign each top blob in the objective.
-  // Each layer assigns a default value, usually of either 0 or 1,
-  // to each top blob.
-  repeated float loss_weight = 5;
-
-  // Specifies training parameters (multipliers on global learning constants,
-  // and the name and other settings used for weight sharing).
-  repeated ParamSpec param = 6;
-
   // The blobs containing the numeric parameters of the layer.
-  repeated BlobProto blobs = 7;
-
-  // Specifies whether to backpropagate to each bottom. If unspecified,
-  // Latte will automatically infer whether each input needs backpropagation
-  // to compute parameter gradients. If set to true for some inputs,
-  // backpropagation to those inputs is forced; if set false for some inputs,
-  // backpropagation to those inputs is skipped.
-  //
-  // The size must be either 0 or equal to the number of bottoms.
-  repeated bool propagate_down = 11;
+  repeated BlobProto blobs = 5;
 
   // Rules controlling whether and when a layer is included in the network,
   // based on the current NetState.  You may specify a non-zero number of rules
@@ -339,14 +114,8 @@ message LayerParameter {
   // specified, the layer is always included.  If the current NetState meets
   // ANY (i.e., one or more) of the specified rules, the layer is
   // included/excluded.
-  repeated NetStateRule include = 8;
-  repeated NetStateRule exclude = 9;
-
-  // Parameters for data pre-processing.
-  TransformationParameter transform_param = 100;
-
-  // Parameters shared by loss layers.
-  LossParameter loss_param = 101;
+  repeated NetStateRule include = 6;
+  repeated NetStateRule exclude = 7;
 
   // Layer type-specific parameters.
   //
@@ -399,54 +168,6 @@ message LayerParameter {
   ThresholdParameter threshold_param = 128;
   TileParameter tile_param = 138;
   WindowDataParameter window_data_param = 129;
-}
-
-// Message that stores parameters used to apply transformation
-// to the data layer's data
-message TransformationParameter {
-  // For data pre-processing, we can do simple scaling and subtracting the
-  // data mean, if provided. Note that the mean subtraction is always carried
-  // out before scaling.
-  float scale = 1;
-  // Specify if we want to randomly mirror data.
-  bool mirror = 2;
-  // Specify if we would like to randomly crop an image.
-  uint32 crop_size = 3;
-  // mean_file and mean_value cannot be specified at the same time
-  string mean_file = 4;
-  // if specified can be repeated once (would subtract it from all the channels)
-  // or can be repeated the same number of times as channels
-  // (would subtract them from the corresponding channel)
-  repeated float mean_value = 5;
-  // Force the decoded image to have 3 color channels.
-  bool force_color = 6;
-  // Force the decoded image to have 1 color channels.
-  bool force_gray = 7;
-}
-
-// Message that stores parameters shared by loss layers
-message LossParameter {
-  // If specified, ignore instances with the given label.
-  int32 ignore_label = 1;
-  // How to normalize the loss for loss layers that aggregate across batches,
-  // spatial dimensions, or other dimensions.  Currently only implemented in
-  // SoftmaxWithLoss and SigmoidCrossEntropyLoss layers.
-  enum NormalizationMode {
-    // Divide by the number of examples in the batch times spatial dimensions.
-    // Outputs that receive the ignore label will NOT be ignored in computing
-    // the normalization factor.
-    FULL = 0;
-    // Divide by the total number of output locations that do not take the
-    // ignore_label.  If ignore_label is not set, this behaves like FULL.
-    VALID = 1;
-    // Divide by the batch size.
-    BATCH_SIZE = 2;
-    // Do not normalize the loss.
-    NONE = 3;
-  }
-  // For historical reasons, the default normalization for
-  // SigmoidCrossEntropyLoss is BATCH_SIZE and *not* VALID.
-  NormalizationMode normalization = 3;
 }
 
 // Messages that store parameters used by individual layer types follow, in
@@ -722,25 +443,6 @@ message FlattenParameter {
   // May be negative to index from the end (e.g., the default -1 for the last
   // axis).
   int32 end_axis = 2;
-}
-
-// Message that stores parameters used by HDF5DataLayer
-message HDF5DataParameter {
-  // Specify the data source.
-  string source = 1;
-  // Specify the batch size.
-  uint32 batch_size = 2;
-
-  // Specify whether to shuffle the data.
-  // If shuffle == true, the ordering of the HDF5 files is shuffled,
-  // and the ordering of data within any given HDF5 file is shuffled,
-  // but data between different files are not interleaved; all of a file's
-  // data are output (in a random order) before moving onto another file.
-  bool shuffle = 3;
-}
-
-message HDF5OutputParameter {
-  string file_name = 1;
 }
 
 message HingeLossParameter {

@@ -8,16 +8,11 @@ DEFINE_string(
     "Optional; run in GPU mode on given device IDs separated by ','."
     "Use '-gpu all' to run on all available GPUs. The effective training "
     "batch size is multiplied by the number of devices.");
-DEFINE_string(solver, "", "The solver definition protocol buffer text file.");
 DEFINE_string(model, "", "The model definition protocol buffer text file.");
-DEFINE_string(phase, "",
-              "Optional; network phase (TRAIN or TEST). Only used for 'time'.");
 DEFINE_int32(level, 0, "Optional; network level.");
 DEFINE_string(stage, "",
               "Optional; network stages (not to be confused with phase), "
               "separated by ','.");
-DEFINE_string(snapshot, "",
-              "Optional; the snapshot solver state to resume training.");
 DEFINE_string(weights, "",
               "Optional; the pretrained weights to initialize finetuning, "
               "separated by ','. Cannot be set simultaneously with snapshot.");
@@ -71,11 +66,11 @@ static void get_gpus(std::vector<int>* gpus) {
   } else if (FLAGS_gpu.size()) {
     std::vector<std::string> strings;
     latte::string_split(&strings, FLAGS_gpu, ",");
-    for (int i = 0; i < strings.size(); ++i) {
+    for (size_t i = 0; i < strings.size(); ++i) {
       gpus->push_back(std::stoi(strings[i]));
     }
   } else {
-    CHECK_EQ(gpus->size(), 0);
+    CHECK_EQ(static_cast<int>(gpus->size()), 0);
   }
 }
 
@@ -90,7 +85,7 @@ int device_query() {
   LOG(INFO) << "Querying GPUs " << FLAGS_gpu;
   std::vector<int> gpus;
   get_gpus(&gpus);
-  for (int i = 0; i < gpus.size(); ++i) {
+  for (size_t i = 0; i < gpus.size(); ++i) {
     latte::Latte::SetDevice(gpus[i]);
     latte::Latte::DeviceQuery();
   }

@@ -11,16 +11,20 @@ template <typename Dtype>
 class Filler {
  public:
   explicit Filler(const FillerParameter &param) : filler_param_(param) {
-    if (filler_param_.type_oneof_case() == FillerParameter::TypeOneofCase::TYPE_ONEOF_NOT_SET) {
+    if (filler_param_.type_oneof_case() ==
+        FillerParameter::TypeOneofCase::TYPE_ONEOF_NOT_SET) {
       filler_param_.set_type("constant");
     }
-    if (filler_param_.max_oneof_case() == FillerParameter::MaxOneofCase::MAX_ONEOF_NOT_SET) {
+    if (filler_param_.max_oneof_case() ==
+        FillerParameter::MaxOneofCase::MAX_ONEOF_NOT_SET) {
       filler_param_.set_max(1.);
     }
-    if (filler_param_.std_oneof_case() == FillerParameter::StdOneofCase::STD_ONEOF_NOT_SET) {
+    if (filler_param_.std_oneof_case() ==
+        FillerParameter::StdOneofCase::STD_ONEOF_NOT_SET) {
       filler_param_.set_std(1.);
     }
-    if (filler_param_.sparse_oneof_case() == FillerParameter::SparseOneofCase::SPARSE_ONEOF_NOT_SET) {
+    if (filler_param_.sparse_oneof_case() ==
+        FillerParameter::SparseOneofCase::SPARSE_ONEOF_NOT_SET) {
       filler_param_.set_sparse(-1);
     }
   }
@@ -56,9 +60,9 @@ class UniformFiller : public Filler<Dtype> {
 
   virtual void Fill(Blob<Dtype> *blob) override {
     CHECK(blob->count());
-    latte_rng_uniform<Dtype>(
-        blob->count(), Dtype(this->filler_param_.min()),
-        Dtype(this->filler_param_.max()), blob->mutable_cpu_data());
+    latte_rng_uniform<Dtype>(blob->count(), Dtype(this->filler_param_.min()),
+                             Dtype(this->filler_param_.max()),
+                             blob->mutable_cpu_data());
     CHECK_EQ(this->filler_param_.sparse(), -1)
         << "Sparsity not supported by this Filler.";
   }

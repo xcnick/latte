@@ -36,19 +36,8 @@ namespace latte {
       const std::vector<Blob<double> *> &bottom, \
       const std::vector<Blob<double> *> &top)
 
-#define INSTANTIATE_LAYER_GPU_BACKWARD(classname) \
-  template void classname<float>::Backward_gpu(   \
-      const std::vector<Blob<float> *> &top,      \
-      const std::vector<bool> &propagate_down,    \
-      const std::vector<Blob<float> *> &bottom);  \
-  template void classname<double>::Backward_gpu(  \
-      const std::vector<Blob<double> *> &top,     \
-      const std::vector<bool> &propagate_down,    \
-      const std::vector<Blob<double> *> &bottom)
-
 #define INSTANTIATE_LAYER_GPU_FUNCS(classname) \
-  INSTANTIATE_LAYER_GPU_FORWARD(classname);    \
-  INSTANTIATE_LAYER_GPU_BACKWARD(classname)
+  INSTANTIATE_LAYER_GPU_FORWARD(classname)
 
 // A simple macro to mark codes that are not implemented, so that when the code
 // is executed we will see a fatal log.
@@ -157,14 +146,6 @@ class Latte : public Noncopyable {
   // Search from start_id to the highest possible device ordinal,
   // return the ordinal of the first available device.
   static int FindDevice(const int start_id = 0);
-  // Parallel training
-  inline static int solver_count() { return Get().solver_count_; }
-  inline static void set_solver_count(int val) { Get().solver_count_ = val; }
-  inline static int solver_rank() { return Get().solver_rank_; }
-  inline static void set_solver_rank(int val) { Get().solver_rank_ = val; }
-  inline static bool multiprocess() { return Get().multiprocess_; }
-  inline static void set_multiprocess(bool val) { Get().multiprocess_ = val; }
-  inline static bool root_solver() { return Get().solver_rank_ == 0; }
 
  protected:
 #ifdef WITH_CUDA
@@ -174,11 +155,6 @@ class Latte : public Noncopyable {
   shared_ptr<RNG> random_generator_;
 
   Brew mode_;
-
-  // Parallel training
-  int solver_count_;
-  int solver_rank_;
-  bool multiprocess_;
 
  private:
   Latte();

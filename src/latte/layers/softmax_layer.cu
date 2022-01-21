@@ -115,30 +115,6 @@ void SoftmaxLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype> *> &bottom,
           count, outer_num_, channels, inner_num_, scale_data, top_data);
 }
 
-template <typename Dtype>
-void SoftmaxLayer<Dtype>::Backward_gpu(const vector<Blob<Dtype> *> &top,
-                                       const vector<bool> &propagate_down,
-                                       const vector<Blob<Dtype> *> &bottom) {
-  const Dtype *top_diff = top[0]->gpu_diff();
-  const Dtype *top_data = top[0]->gpu_data();
-  Dtype *bottom_diff = bottom[0]->mutable_gpu_diff();
-  Dtype *scale_data = scale_.mutable_gpu_data();
-  int count = top[0]->count();
-  int channels = top[0]->shape(softmax_axis_);
-  latte_copy(count, top_diff, bottom_diff);
-  // Compute inner1d(top_diff, top_data) and subtract them from the bottom diff.
-  // NOLINT_NEXT_LINE(whitespace/operators)
-  kernel_channel_dot<Dtype>
-      <<<LATTE_GET_BLOCKS(outer_num_ * inner_num_), LATTE_CUDA_NUM_THREADS>>>(
-          outer_num_, channels, inner_num_, top_diff, top_data, scale_data);
-  // NOLINT_NEXT_LINE(whitespace/operators)
-  kernel_channel_subtract<Dtype>
-      <<<LATTE_GET_BLOCKS(count), LATTE_CUDA_NUM_THREADS>>>(
-          count, outer_num_, channels, inner_num_, scale_data, bottom_diff);
-  // elementwise multiplication
-  latte_gpu_mul<Dtype>(top[0]->count(), bottom_diff, top_data, bottom_diff);
-}
-
 INSTANTIATE_LAYER_GPU_FUNCS(SoftmaxLayer);
 
 }  // namespace latte

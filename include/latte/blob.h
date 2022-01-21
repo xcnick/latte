@@ -1,7 +1,6 @@
 #ifndef LATTE_BLOB_H_
 #define LATTE_BLOB_H_
 
-//#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -16,7 +15,7 @@ namespace latte {
 template <typename Dtype>
 class Blob : public Noncopyable {
  public:
-  Blob() : data_(), diff_(), count_(0), capacity_(0) {}
+  Blob() : data_(), count_(0), capacity_(0) {}
 
   explicit Blob(const vector<int> &shape);
 
@@ -86,15 +85,10 @@ class Blob : public Noncopyable {
     return offset;
   }
 
-  void CopyFrom(const Blob<Dtype> &source, bool copy_diff = false,
-                bool reshape = false);
+  void CopyFrom(const Blob<Dtype> &source, bool reshape = false);
 
   inline Dtype data_at(const vector<int> &index) const {
     return cpu_data()[offset(index)];
-  }
-
-  inline Dtype diff_at(const vector<int> &index) const {
-    return cpu_diff()[offset(index)];
   }
 
   inline const shared_ptr<SyncedMemory> &data() const {
@@ -102,44 +96,29 @@ class Blob : public Noncopyable {
     return data_;
   }
 
-  inline const shared_ptr<SyncedMemory> &diff() const {
-    CHECK(diff_);
-    return diff_;
-  }
-
   const Dtype *cpu_data() const;
   void set_cpu_data(Dtype *type);
   const int *gpu_shape() const;
   const Dtype *gpu_data() const;
   void set_gpu_data(Dtype *data);
-  const Dtype *cpu_diff() const;
-  const Dtype *gpu_diff() const;
   Dtype *mutable_cpu_data();
   Dtype *mutable_gpu_data();
-  Dtype *mutable_cpu_diff();
-  Dtype *mutable_gpu_diff();
-  void Update();
   void FromProto(const BlobProto &proto, bool reshape = true);
-  void ToProto(BlobProto *proto, bool write_diff = false) const;
+  void ToProto(BlobProto *proto) const;
 
   // L1 norm
   Dtype asum_data() const;
-  Dtype asum_diff() const;
   // L2 norm squared
   Dtype sumsq_data() const;
-  Dtype sumsq_diff() const;
 
   void scale_data(Dtype scale_factor);
-  void scale_diff(Dtype scale_factor);
 
   void ShareData(const Blob &other);
-  void ShareDiff(const Blob &other);
 
   bool ShapeEquals(const BlobProto &other);
 
  protected:
   shared_ptr<SyncedMemory> data_;
-  shared_ptr<SyncedMemory> diff_;
   shared_ptr<SyncedMemory> shape_data_;
   vector<int> shape_;
   int count_;

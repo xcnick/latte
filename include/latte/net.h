@@ -17,7 +17,7 @@ class Net : public Noncopyable {
   // phase：当前net是进行TEST还是TRAIN
   // level：指出当前net中哪些layer要包含在net中
   // stage：指出当前net中哪些layer要包含在net中
-  explicit Net(const string &param_file, Phase phase, const int level = 0,
+  explicit Net(const string &param_file, const int level = 0,
                const vector<string> *stages = nullptr);
   virtual ~Net() {}
 
@@ -25,34 +25,14 @@ class Net : public Noncopyable {
   // 对net中各个layer，每个layer输入输出blob，layer初始化
   void Init(const NetParameter &param);
 
-  const vector<Blob<Dtype> *> &Forward(Dtype *loss = nullptr);
+  const vector<Blob<Dtype> *> &Forward();
 
   Dtype ForwardFromTo(int start, int end);
   Dtype ForwardFrom(int start);
   Dtype ForwardTo(int end);
 
-  // 对Net中所有的diff_数据清零
-  void ClearParamDiffs();
-
-  // 反向转播，内部都会调用BackwardFromTo函数
-  void Backward();
-  void BackwardFromTo(int start, int end);
-  void BackwardFrom(int start);
-  void BackwardTo(int end);
-
   // 调整Layers的shape
   void Reshape();
-
-  // 前向反向传播
-  Dtype ForwardBackward() {
-    Dtype loss;
-    Forward(&loss);
-    Backward();
-    return loss;
-  }
-
-  // 更新Net权值和偏置
-  void Update();
 
   // 共享权值和偏置数据，仅在Net::Init中被调用
   void ShareWeights();
@@ -66,7 +46,7 @@ class Net : public Noncopyable {
   void CopyTrainedLayersFromBinaryProto(const string &trained_filename);
 
   // 将Net写入到Proto文件
-  void ToProto(NetParameter *param, bool write_diff = false) const;
+  void ToProto(NetParameter *param) const;
 
   // Net名称
   inline const string &name() const { return name_; }
@@ -80,8 +60,6 @@ class Net : public Noncopyable {
   inline const vector<shared_ptr<Layer<Dtype>>> &layers() const {
     return layers_;
   }
-  // Net Phase状态：TRAIN or TEST
-  inline Phase phase() const { return phase_; }
 
   inline const vector<vector<Blob<Dtype> *>> &bottom_vecs() const {
     return bottom_vecs_;
@@ -103,36 +81,8 @@ class Net : public Noncopyable {
     return bottom_id_vecs_[i];
   }
 
-  inline const vector<vector<bool>> &bottom_need_backward() const {
-    return bottom_need_backward_;
-  }
-
-  inline const vector<Dtype> &blob_loss_weights() const {
-    return blob_loss_weights_;
-  }
-
-  inline const vector<bool> &layer_need_backward() const {
-    return layer_need_backward_;
-  }
-
   inline const vector<shared_ptr<Blob<Dtype>>> &params() const {
     return params_;
-  }
-
-  inline const vector<Blob<Dtype> *> &learnable_params() const {
-    return learnable_params_;
-  }
-
-  inline const vector<float> &params_lr() const { return params_lr_; }
-
-  inline const vector<bool> &has_params_lr() const { return has_params_lr_; }
-
-  inline const vector<float> &params_weight_decay() const {
-    return params_weight_decay_;
-  }
-
-  inline const vector<bool> &has_params_decay() const {
-    return has_params_decay_;
   }
 
   inline const map<string, int> &param_names_index() const {
@@ -191,13 +141,6 @@ class Net : public Noncopyable {
   const vector<Callback *> &after_forward() const { return after_forward_; }
   void add_after_forward(Callback *value) { after_forward_.push_back(value); }
 
-  const vector<Callback *> &before_backward() const { return before_backward_; }
-  void add_before_backward(Callback *value) {
-    before_backward_.push_back(value);
-  }
-  const vector<Callback *> &after_backward() const { return after_backward_; }
-  void add_after_backward(Callback *value) { after_backward_.push_back(value); }
-
  protected:
   // 给某层增加一个top blob
   void AppendTop(const NetParameter &param, const int layer_id,
@@ -207,43 +150,30 @@ class Net : public Noncopyable {
   int AppendBottom(const NetParameter &param, const int layer_id,
                    const int bottom_id, set<string> *available_blobs,
                    map<string, int> *blob_name_to_idx);
-  // 给某层增加可学习参数blob和超训练参数
-  void AppendParam(const NetParameter &param, const int layer_id,
-                   const int param_id);
 
   void ForwardDebugInfo(const int layer_id);
 
-  void BackwardDebugInfo(const int layer_id);
-
-  void UpdateDebugInfo(const int param_id);
-
   // 网络名称
   string name_;
-  // TRAIN or TEST
-  Phase phase_;
   // layers
   vector<shared_ptr<Layer<Dtype>>> layers_;
   vector<string> layer_names_;
   map<string, int> layer_names_index_;
-  vector<bool> layer_need_backward_;
 
   // 存储每个layer的中间结果
   vector<shared_ptr<Blob<Dtype>>> blobs_;
   vector<string> blob_names_;
   map<string, int> blob_names_index_;
-  vector<bool> blob_need_backward_;
 
   // 存储每个layer bottom blobs指针
   vector<vector<Blob<Dtype> *>> bottom_vecs_;
   vector<vector<int>> bottom_id_vecs_;
-  vector<vector<bool>> bottom_need_backward_;
 
   // 存储每个layer top blobs指针
   vector<vector<Blob<Dtype> *>> top_vecs_;
   vector<vector<int>> top_id_vecs_;
 
   // layer的loss函数值
-  vector<Dtype> blob_loss_weights_;
   vector<vector<int>> param_id_vecs_;
   vector<int> param_owners_;
   vector<string> param_display_names_;
@@ -257,7 +187,6 @@ class Net : public Noncopyable {
   vector<Blob<Dtype> *> net_output_blobs_;
   // parameters
   vector<shared_ptr<Blob<Dtype>>> params_;
-  vector<Blob<Dtype> *> learnable_params_;
   /**
    * The mapping from params_ -> learnable_params_: we have
    * learnable_param_ids_.size() == params_.size(),
@@ -265,13 +194,6 @@ class Net : public Noncopyable {
    * if and only if params_[i] is an "owner"; otherwise, params_[i] is a sharer
    * and learnable_params_[learnable_param_ids_[i]] gives its owner.
    */
-  vector<int> learnable_param_ids_;
-  // 学习率
-  vector<float> params_lr_;
-  vector<bool> has_params_lr_;
-  // 权重衰减
-  vector<float> params_weight_decay_;
-  vector<bool> has_params_decay_;
   // Net使用的内存字节数
   size_t memory_used_;
   // 是否显示debug信息
@@ -279,8 +201,6 @@ class Net : public Noncopyable {
   // Callbacks
   vector<Callback *> before_forward_;
   vector<Callback *> after_forward_;
-  vector<Callback *> before_backward_;
-  vector<Callback *> after_backward_;
 };
 }  // namespace latte
 

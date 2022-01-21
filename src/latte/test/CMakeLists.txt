@@ -7,12 +7,12 @@ target_sources(test_latte
     test_blob.cc
     test_common.cc
     test_dummy_data_layer.cc
-    test_euclidean_loss_layer.cc
+    #test_euclidean_loss_layer.cc
     test_filler.cc
     test_inner_product_layer.cc
     test_latte_main.cc
     test_layer_factory.cc
-    test_net.cc
+    #test_net.cc
     test_softmax_layer.cc
     test_syncedmem.cc
 )

@@ -3,9 +3,7 @@ add_library(latte_layers STATIC)
 target_sources(latte_layers
   PRIVATE
     dummy_data_layer.cc
-    euclidean_loss_layer.cc
     inner_product_layer.cc
-    loss_layer.cc
     neuron_layer.cc
     sigmoid_layer.cc
     softmax_layer.cc
@@ -14,7 +12,6 @@ target_sources(latte_layers
 if (BUILD_CUDA)
   target_sources(latte_layers
     PRIVATE
-      euclidean_loss_layer.cu
       inner_product_layer.cu
       sigmoid_layer.cu
       softmax_layer.cu

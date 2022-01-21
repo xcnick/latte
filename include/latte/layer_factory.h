@@ -49,9 +49,7 @@ class LayerRegistry {
 
   // Get a layer using a LayerParameter
   static shared_ptr<Layer<Dtype>> CreateLayer(const LayerParameter &param) {
-    if (Latte::root_solver()) {
-      LOG(INFO) << "Creating layer " << param.name();
-    }
+    LOG(INFO) << "Creating layer " << param.name();
     const string &type = param.type();
     CreatorRegistry &registry = Registry();
     CHECK_EQ(registry.count(type), static_cast<size_t>(1))
