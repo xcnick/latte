@@ -52,7 +52,7 @@ set(Latte_COMPILE_OPTIONS -Wall)
 list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # ---[ third_party
-set(THIRD_PARTY_PATH ${PROJECT_SOURCE_DIR}/third_party)
+set(THIRD_PARTY_PATH ${PROJECT_BINARY_DIR}/third_party)
 include(cmake/third_party.cmake)
 
 set(CMAKE_CXX_STANDARD 14)
