@@ -17,7 +17,7 @@ set(PROTOBUF_LIBRARIES ${THIRD_PARTY_PATH}/protobuf/lib/libprotobuf.a)
 ExternalProject_Add(
     protobuf
     GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-    GIT_TAG        v3.19.0
+    GIT_TAG        v3.20.1
     GIT_SHALLOW
     SOURCE_SUBDIR  cmake
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROTOBUF_INSTALL_DIR} \\
@@ -28,18 +28,18 @@ ExternalProject_Add(
                -Dprotobuf_BUILD_TESTS=OFF \\
                -DBUILD_SHARED_LIBS=OFF \\
                -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    BUILD_BYPRODUCTS ${PROTOBUF_LIBRARIES}
 )
 
 add_executable(protoc IMPORTED GLOBAL)
 add_dependencies(protoc protobuf)
-# set_target_properties(
-#     protoc PROPERTIES
-#     IMPORTED_LOCATION ${protobuf_BINARY_DIR}/bin/protoc
-# )
+set_target_properties(
+    protoc PROPERTIES
+    IMPORTED_LOCATION ${PROTOBUF_INSTALL_DIR}/bin/protoc
+)
 
-
-set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOBUF_INSTALL_DIR}/bin/protoc)
-set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
+#set(PROTOBUF_PROTOC_EXECUTABLE ${PROTOBUF_INSTALL_DIR}/bin/protoc)
+#set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
 
 
 #if(EXISTS ${PROTOBUF_PROTOC_EXECUTABLE})
@@ -59,6 +59,8 @@ set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
 # place where to generate protobuf sources
 set(proto_gen_folder ${PROJECT_BINARY_DIR}/include/latte/proto)
 list(APPEND Latte_INCLUDE_DIRS PUBLIC ${PROJECT_BINARY_DIR}/include)
+
+list(APPEND External_PROJECT_TARGETS protobuf)
 
 set(PROTOBUF_GENERATE_CPP_APPEND_PATH TRUE)
 
@@ -99,7 +101,7 @@ function(latte_protobuf_generate_cpp output_dir srcs_var hdrs_var)
       OUTPUT "${output_dir}/${fil_we}.pb.cc"
              "${output_dir}/${fil_we}.pb.h"
       COMMAND ${CMAKE_COMMAND} -E make_directory "${output_dir}"
-      COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} --cpp_out    ${output_dir} ${_protoc_include} ${abs_fil}
+      COMMAND protoc --cpp_out ${output_dir} ${_protoc_include} ${abs_fil}
       DEPENDS ${abs_fil}
       COMMENT "Running C++ protocol buffer compiler on ${fil}" VERBATIM )
   endforeach()

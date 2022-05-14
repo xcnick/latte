@@ -61,9 +61,8 @@ class LayerRegistry {
   static vector<string> LayerTypeList() {
     CreatorRegistry &registry = Registry();
     vector<string> layer_types;
-    for (typename CreatorRegistry::iterator iter = registry.begin();
-         iter != registry.end(); ++iter) {
-      layer_types.push_back(iter->first);
+    for (auto iter = registry.begin(); iter != registry.end(); ++iter) {
+      layer_types.emplace_back(iter->first);
     }
     return layer_types;
   }
@@ -74,8 +73,7 @@ class LayerRegistry {
   static string LayerTypeListString() {
     vector<string> layer_types = LayerTypeList();
     string layer_types_str;
-    for (vector<string>::iterator iter = layer_types.begin();
-         iter != layer_types.end(); ++iter) {
+    for (auto iter = layer_types.begin(); iter != layer_types.end(); ++iter) {
       if (iter != layer_types.begin()) {
         layer_types_str += ", ";
       }

@@ -11,3 +11,5 @@ target_compile_definitions(latte_main PRIVATE ${Latte_DEFINITIONS})
 if(Latte_COMPILE_OPTIONS)
   target_compile_options(latte_main PRIVATE ${Latte_COMPILE_OPTIONS})
 endif()
+
+add_dependencies(latte_main ${External_PROJECT_TARGETS})
