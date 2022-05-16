@@ -4,7 +4,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && apt-get install -y --no-install-recommends \
     git \
     wget \
-    ca-certificates && \
+    ca-certificates \
+    libopenblas-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1-linux-x86_64.tar.gz \
