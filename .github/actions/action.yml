@@ -1,5 +1,0 @@
-name: build-latte
-description: 'build latte'
-runs:
-  using: 'docker'
-  image: 'latte:ci'
