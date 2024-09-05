@@ -11,7 +11,7 @@ SyncedMemory::SyncedMemory()
       own_cpu_data_(false),
       cpu_malloc_use_cuda_(false),
       own_gpu_data_(false) {
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
 #ifdef DEBUG
   CUDA_CHECK(cudaGetDevice(&device));
 #endif
@@ -26,7 +26,7 @@ SyncedMemory::SyncedMemory(size_t size)
       own_cpu_data_(false),
       cpu_malloc_use_cuda_(false),
       own_gpu_data_(false) {
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
 #ifdef DEBUG
   CUDA_CHECK(cudaGetDevice(&device));
 #endif
@@ -39,7 +39,7 @@ SyncedMemory::~SyncedMemory() {
     LatteFreeHost(cpu_ptr_, cpu_malloc_use_cuda_);
   }
 
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   if (gpu_ptr_ && own_gpu_data_) {
     CUDA_CHECK(cudaFree(gpu_ptr_));
   }
@@ -47,7 +47,7 @@ SyncedMemory::~SyncedMemory() {
 }
 
 void SyncedMemory::LatteMallocHost(void **ptr, size_t size, bool *use_cuda) {
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   if (Latte::mode() == Latte::GPU) {
     CUDA_CHECK(cudaMallocHost(ptr, size));
     *use_cuda = true;
@@ -61,7 +61,7 @@ void SyncedMemory::LatteMallocHost(void **ptr, size_t size, bool *use_cuda) {
 }
 
 void SyncedMemory::LatteFreeHost(void *ptr, bool use_cuda) {
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   if (use_cuda) {
     CUDA_CHECK(cudaFreeHost(ptr));
     return;
@@ -71,7 +71,7 @@ void SyncedMemory::LatteFreeHost(void *ptr, bool use_cuda) {
 }
 
 void SyncedMemory::check_device() {
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
 #ifdef DEBUG
   int device;
   cudaGetDevice(&device);
@@ -95,7 +95,7 @@ void SyncedMemory::to_cpu() {
       own_cpu_data_ = true;
       break;
     case SyncedHead::HEAD_AT_GPU:
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
       if (cpu_ptr_ == nullptr) {
         LatteMallocHost(&cpu_ptr_, size_, &cpu_malloc_use_cuda_);
         own_cpu_data_ = true;
@@ -115,7 +115,7 @@ void SyncedMemory::to_cpu() {
 
 void SyncedMemory::to_gpu() {
   check_device();
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   switch (head_) {
     case SyncedHead::UNINITIALIZED:
       CUDA_CHECK(cudaMalloc(&gpu_ptr_, size_));
@@ -159,7 +159,7 @@ void SyncedMemory::set_cpu_data(void *data) {
 
 const void *SyncedMemory::gpu_data() {
   check_device();
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   to_gpu();
   return reinterpret_cast<const void *>(gpu_ptr_);
 #else
@@ -170,7 +170,7 @@ const void *SyncedMemory::gpu_data() {
 
 void SyncedMemory::set_gpu_data(void *data) {
   check_device();
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   CHECK(data);
   if (own_gpu_data_) {
     CUDA_CHECK(cudaFree(gpu_ptr_));
@@ -192,7 +192,7 @@ void *SyncedMemory::mutable_cpu_data() {
 
 void *SyncedMemory::mutable_gpu_data() {
   check_device();
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   to_gpu();
   head_ = SyncedHead::HEAD_AT_GPU;
   return gpu_ptr_;
@@ -202,7 +202,7 @@ void *SyncedMemory::mutable_gpu_data() {
 #endif
 }
 
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
 void SyncedMemory::async_gpu_push(const cudaStream_t &stream) {
   check_device();
   CHECK(head_ == SyncedHead::HEAD_AT_CPU);

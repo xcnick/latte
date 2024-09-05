@@ -1,9 +1,4 @@
-if (BUILD_CUDA)
-  # if ((NOT CUDA_STATIC) OR WITH_XLA OR BUILD_SHARED_LIBS)
-  #   set(OF_CUDA_LINK_DYNAMIC_LIBRARY ON)
-  # else()
-  #   set(OF_CUDA_LINK_DYNAMIC_LIBRARY OFF)
-  # endif()
+if (USE_CUDA)
   find_package(CUDAToolkit REQUIRED)
   message(STATUS "CUDAToolkit_FOUND: ${CUDAToolkit_FOUND}")
   message(STATUS "CUDAToolkit_VERSION: ${CUDAToolkit_VERSION}")
@@ -16,21 +11,54 @@ if (BUILD_CUDA)
   message(STATUS "CUDAToolkit_LIBRARY_ROOT: ${CUDAToolkit_LIBRARY_ROOT}")
   message(STATUS "CUDAToolkit_TARGET_DIR: ${CUDAToolkit_TARGET_DIR}")
   message(STATUS "CUDAToolkit_NVCC_EXECUTABLE: ${CUDAToolkit_NVCC_EXECUTABLE}")
-  if (CUDA_NVCC_GENCODES)
-    message(FATAL_ERROR "CUDA_NVCC_GENCODES is deprecated, use CMAKE_CUDA_ARCHITECTURES instead")
-  endif()
-  list(APPEND Latte_DEFINITIONS PRIVATE -DWITH_CUDA)
-  list(APPEND Latte_LINKER_LIBS PRIVATE CUDA::cudart CUDA::cublas CUDA::curand)
+
   # NOTE: For some unknown reason, CUDAToolkit_VERSION may become empty when running cmake again
   set(CUDA_VERSION ${CUDAToolkit_VERSION} CACHE STRING "")
   if(NOT CUDA_VERSION)
     message(FATAL_ERROR "CUDA_VERSION empty")
   endif()
   message(STATUS "CUDA_VERSION: ${CUDA_VERSION}")
-  # add a cache entry if want to use a ccache/sccache wrapped nvcc
-  set(CMAKE_CUDA_COMPILER ${CUDAToolkit_NVCC_EXECUTABLE} CACHE STRING "")
-  message(STATUS "CMAKE_CUDA_COMPILER: ${CMAKE_CUDA_COMPILER}")
-  set(CMAKE_CUDA_STANDARD 14)
-  #find_package(CUDNN REQUIRED)
+
+  if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 60-real)
+    # Tesla P40/P4, Quadro Pxxx/Pxxxx, GeForce GTX 10xx, TITAN X/Xp
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 61-real)
+    # V100, TITAN V
+    list(APPEND CMAKE_CUDA_ARCHITECTURES 70-real)
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "10.0")
+      # T4, Quadro RTX xxxx, Txxxx, Geforce RTX 20xx, TITAN RTX
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 75-real)
+    endif()
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "11.0")
+      # A100
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 80-real)
+    endif()
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "11.1")
+      # GeForce RTX 30xx
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 86-real)
+    endif()
+    if(CUDA_VERSION VERSION_GREATER_EQUAL "11.8")
+      # GeForce RTX 40xx
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 89-real)
+      # NVIDIA H100
+      list(APPEND CMAKE_CUDA_ARCHITECTURES 90-real)
+    endif()
+  endif()
+  enable_language(CUDA)
+  include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+  message(STATUS "CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES}")
+  set(CUDA_SEPARABLE_COMPILATION OFF)
+  set(CMAKE_CUDA_STANDARD 17)
+
+  if(CMAKE_CUDA_COMPILER_VERSION VERSION_GREATER_EQUAL "11.2")
+    set(CUDA_NVCC_THREADS_NUMBER "1" CACHE STRING "")
+    list(APPEND CUDA_NVCC_FLAGS -t ${CUDA_NVCC_THREADS_NUMBER})
+  endif()
+  message(STATUS "CUDA_NVCC_FLAGS: " ${CUDA_NVCC_FLAGS})
+  list(JOIN CUDA_NVCC_FLAGS " " CMAKE_CUDA_FLAGS)
+
+  list(APPEND Latte_DEFINITIONS PRIVATE -DUSE_CUDA)
+  list(APPEND Latte_LINKER_LIBS PRIVATE CUDA::cudart CUDA::cublas CUDA::curand)
+
   include(cmake/cudnn.cmake)
 endif()

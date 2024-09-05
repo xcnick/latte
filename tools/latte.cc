@@ -55,7 +55,7 @@ static BrewFunction GetBrewFunction(const std::string &name) {
 static void get_gpus(std::vector<int>* gpus) {
   if (FLAGS_gpu == "all") {
     int count = 0;
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
     CUDA_CHECK(cudaGetDeviceCount(&count));
 #else
     NO_GPU;

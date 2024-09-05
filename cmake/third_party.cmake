@@ -41,76 +41,8 @@ include(cmake/External/gtest.cmake)
 list(APPEND Latte_INCLUDE_DIRS PRIVATE ${GTEST_INCLUDE_DIRS})
 list(APPEND Latte_LINKER_LIBS PRIVATE ${GTEST_LIBRARIES})
 
-# ---[ HDF5
-# find_package(HDF5 COMPONENTS HL REQUIRED)
-# list(APPEND Latte_INCLUDE_DIRS PUBLIC ${HDF5_INCLUDE_DIRS})
-# list(APPEND Latte_LINKER_LIBS PUBLIC ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES})
-
-# This code is taken from https://github.com/sh1r0/latte-android-lib
-# if(USE_HDF5)
-#   find_package(HDF5 COMPONENTS HL REQUIRED)
-#   include_directories(SYSTEM ${HDF5_INCLUDE_DIRS} ${HDF5_HL_INCLUDE_DIR})
-#   list(APPEND Latte_LINKER_LIBS ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES})
-#   add_definitions(-DUSE_HDF5)
-# endif()
-
-# ---[ LMDB
-# if(USE_LMDB)
-#   find_package(LMDB REQUIRED)
-#   list(APPEND Latte_INCLUDE_DIRS PUBLIC ${LMDB_INCLUDE_DIR})
-#   list(APPEND Latte_LINKER_LIBS PUBLIC ${LMDB_LIBRARIES})
-#   list(APPEND Latte_DEFINITIONS PUBLIC -DUSE_LMDB)
-#   if(ALLOW_LMDB_NOLOCK)
-#     list(APPEND Latte_DEFINITIONS PRIVATE -DALLOW_LMDB_NOLOCK)
-#   endif()
-# endif()
-
-# ---[ LevelDB
-# if(USE_LEVELDB)
-#   find_package(LevelDB REQUIRED)
-#   list(APPEND Latte_INCLUDE_DIRS PUBLIC ${LevelDB_INCLUDES})
-#   list(APPEND Latte_LINKER_LIBS PUBLIC ${LevelDB_LIBRARIES})
-#   list(APPEND Latte_DEFINITIONS PUBLIC -DUSE_LEVELDB)
-# endif()
-
-# ---[ Snappy
-# if(USE_LEVELDB)
-#   find_package(Snappy REQUIRED)
-#   list(APPEND Latte_INCLUDE_DIRS PRIVATE ${Snappy_INCLUDE_DIR})
-#   list(APPEND Latte_LINKER_LIBS PRIVATE ${Snappy_LIBRARIES})
-# endif()
-
 # ---[ CUDA
 include(cmake/cuda.cmake)
-
-# if(NOT HAVE_CUDA)
-#   if(CPU_ONLY)
-#     message(STATUS "-- CUDA is disabled. Building without it...")
-#   else()
-#     message(WARNING "-- CUDA is not detected by cmake. Building without it...")
-#   endif()
-
-#   list(APPEND Latte_DEFINITIONS PUBLIC -DCPU_ONLY)
-# endif()
-
-# if(USE_NCCL)
-#   find_package(NCCL REQUIRED)
-#   include_directories(SYSTEM ${NCCL_INCLUDE_DIR})
-#   list(APPEND Latte_LINKER_LIBS ${NCCL_LIBRARIES})
-#   add_definitions(-DUSE_NCCL)
-# endif()
-
-# ---[ OpenCV
-# if(USE_OPENCV)
-#   find_package(OpenCV QUIET COMPONENTS core highgui imgproc imgcodecs)
-#   if(NOT OpenCV_FOUND) # if not OpenCV 3.x, then imgcodecs are not found
-#     find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc)
-#   endif()
-#   list(APPEND Latte_INCLUDE_DIRS PUBLIC ${OpenCV_INCLUDE_DIRS})
-#   list(APPEND Latte_LINKER_LIBS PUBLIC ${OpenCV_LIBS})
-#   message(STATUS "OpenCV found (${OpenCV_CONFIG_PATH})")
-#   list(APPEND Latte_DEFINITIONS PUBLIC -DUSE_OPENCV)
-# endif()
 
 # ---[ BLAS
 set(BLAS "Open" CACHE STRING "Selected BLAS library")

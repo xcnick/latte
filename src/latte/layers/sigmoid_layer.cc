@@ -20,7 +20,7 @@ void SigmoidLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype> *> &bottom,
   }
 }
 
-#ifndef WITH_CUDA
+#ifndef USE_CUDA
 STUB_GPU(SigmoidLayer);
 #endif
 

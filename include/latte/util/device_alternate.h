@@ -1,7 +1,7 @@
 #ifndef LATTE_UTIL_DEVICE_ALTERNATE_H_
 #define LATTE_UTIL_DEVICE_ALTERNATE_H_
 
-#ifndef WITH_CUDA  // CPU-only Latte.
+#ifndef USE_CUDA  // CPU-only Latte.
 
 #include <vector>
 
@@ -84,6 +84,6 @@ inline int LATTE_GET_BLOCKS(const int N) {
 
 }  // namespace latte
 
-#endif  // WITH_CUDA
+#endif  // USE_CUDA
 
 #endif  // Latte_UTIL_DEVICE_ALTERNATE_H_

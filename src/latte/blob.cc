@@ -129,7 +129,7 @@ Dtype Blob<Dtype>::asum_data() const {
       return latte_cpu_asum(count_, cpu_data());
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
       Dtype asum;
       latte_gpu_asum(count_, gpu_data(), &asum);
       return asum;
@@ -170,7 +170,7 @@ Dtype Blob<Dtype>::sumsq_data() const {
       break;
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
       data = gpu_data();
       latte_gpu_dot(count_, data, data, &sumsq);
 #else
@@ -208,7 +208,7 @@ void Blob<Dtype>::scale_data(Dtype scale_factor) {
       return;
     case SyncedMemory::SyncedHead::HEAD_AT_GPU:
     case SyncedMemory::SyncedHead::SYNCED:
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
       data = mutable_gpu_data();
       latte_gpu_scal(count_, scale_factor, data);
 #else

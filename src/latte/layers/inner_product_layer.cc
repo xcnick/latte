@@ -115,7 +115,7 @@ void InnerProductLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype> *> &bottom,
 }
 
 
-#ifndef WITH_CUDA
+#ifndef USE_CUDA
 STUB_GPU(InnerProductLayer);
 #endif
 

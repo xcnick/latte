@@ -8,7 +8,7 @@ target_sources(latte_util
     math_functions.cc
 )
 
-if (BUILD_CUDA)
+if (USE_CUDA)
   target_sources(latte_util
     PRIVATE
       math_functions.cu

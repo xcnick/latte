@@ -177,7 +177,7 @@ void latte_rng_bernoulli(const int n, const Dtype p, int *r);
 template <typename Dtype>
 void latte_rng_bernoulli(const int n, const Dtype p, unsigned int *r);
 
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
 
 void latte_gpu_memcpy(const size_t N, const void *X, void *Y);
 

@@ -119,7 +119,7 @@ class Latte : public Noncopyable {
     }
     return *(Get().random_generator_);
   }
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   inline static cublasHandle_t cublas_handle() { return Get().cublas_handle_; }
   inline static curandGenerator_t curand_generator() {
     return Get().curand_generator_;
@@ -148,7 +148,7 @@ class Latte : public Noncopyable {
   static int FindDevice(const int start_id = 0);
 
  protected:
-#ifdef WITH_CUDA
+#ifdef USE_CUDA
   cublasHandle_t cublas_handle_;
   curandGenerator_t curand_generator_;
 #endif

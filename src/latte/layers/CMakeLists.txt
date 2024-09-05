@@ -9,13 +9,20 @@ target_sources(latte_layers
     softmax_layer.cc
 )
 
-if (BUILD_CUDA)
+if (USE_CUDA)
   target_sources(latte_layers
     PRIVATE
       inner_product_layer.cu
       sigmoid_layer.cu
       softmax_layer.cu
   )
+  if (USE_CUDNN)
+    target_sources(latte_layers
+      PRIVATE
+        cudnn_sigmoid_layer.cc
+        cudnn_softmax_layer.cc
+    )
+  endif()
 endif()
 
 target_include_directories(latte_layers PRIVATE ${Latte_INCLUDE_DIRS})
