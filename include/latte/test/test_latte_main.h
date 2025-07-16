@@ -3,7 +3,7 @@
 #ifndef LATTE_TEST_TEST_LATTE_MAIN_H_
 #define LATTE_TEST_TEST_LATTE_MAIN_H_
 
-#include <glog/logging.h>
+#include "latte/util/simple_logging.h"
 #include <gtest/gtest.h>
 
 #include <cstdio>

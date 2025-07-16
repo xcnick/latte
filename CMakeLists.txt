@@ -21,9 +21,6 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/External)
 
 # ---[ Options
 option(USE_CUDA "" ON)
-if (USE_CUDA)
-  option(USE_CUDNN "Build Latte with cuDNN library support" ON)
-endif()
 option(USE_OPENMP "" ON)
 
 set(Latte_INCLUDE_DIRS "")

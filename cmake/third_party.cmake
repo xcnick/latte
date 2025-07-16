@@ -26,15 +26,9 @@ include(cmake/External/protobuf.cmake)
 list(APPEND Latte_INCLUDE_DIRS PRIVATE ${PROTOBUF_INCLUDE_DIR})
 list(APPEND Latte_LINKER_LIBS PRIVATE ${PROTOBUF_LIBRARIES})
 
-# ---[ Google-glog
-include(cmake/External/glog.cmake)
-list(APPEND Latte_INCLUDE_DIRS PUBLIC ${GLOG_INCLUDE_DIRS})
-list(APPEND Latte_LINKER_LIBS PUBLIC ${GLOG_LIBRARIES})
 
-# ---[ Google-gflags
-include(cmake/External/gflags.cmake)
-list(APPEND Latte_INCLUDE_DIRS PRIVATE ${GFLAGS_INCLUDE_DIRS})
-list(APPEND Latte_LINKER_LIBS PRIVATE ${GFLAGS_LIBRARIES})
+
+
 
 # ---[ Google-gtest
 include(cmake/External/gtest.cmake)

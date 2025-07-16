@@ -59,6 +59,4 @@ if (USE_CUDA)
 
   list(APPEND Latte_DEFINITIONS PRIVATE -DUSE_CUDA)
   list(APPEND Latte_LINKER_LIBS PRIVATE CUDA::cudart CUDA::cublas CUDA::curand)
-
-  include(cmake/cudnn.cmake)
 endif()

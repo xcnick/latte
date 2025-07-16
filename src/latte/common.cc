@@ -1,4 +1,4 @@
-#include <glog/logging.h>
+#include "latte/util/simple_logging.h"
 
 #include "latte/common.h"
 #include "latte/util/rng.h"
@@ -22,8 +22,6 @@ int64_t cluster_seedgen(void) {
 }
 
 void GlobalInit(int *pargc, char ***pargv) {
-  // Google flags.
-  ::gflags::ParseCommandLineFlags(pargc, pargv, true);
   // Google logging.
   ::google::InitGoogleLogging(*(pargv)[0]);
   // Provide a backtrace on segfault.

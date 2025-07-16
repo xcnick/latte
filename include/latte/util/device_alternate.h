@@ -30,9 +30,7 @@
 #include <cuda_runtime.h>
 #include <curand.h>
 #include <driver_types.h>  // cuda driver types
-#ifdef USE_CUDNN           // cuDNN acceleration library.
-#include "latte/util/cudnn.h"
-#endif
+
 
 //
 // CUDA macros

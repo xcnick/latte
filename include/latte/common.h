@@ -1,8 +1,7 @@
 #ifndef LATTE_COMMON_H_
 #define LATTE_COMMON_H_
 
-#include <gflags/gflags.h>
-#include <glog/logging.h>
+#include "latte/util/simple_logging.h"
 
 #include <climits>
 #include <cmath>

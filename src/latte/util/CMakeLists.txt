@@ -6,6 +6,7 @@ target_sources(latte_util
     insert_splits.cc
     io.cc
     math_functions.cc
+    simple_logging.cc
 )
 
 if (USE_CUDA)
@@ -13,12 +14,6 @@ if (USE_CUDA)
     PRIVATE
       math_functions.cu
   )
-  if (USE_CUDNN)
-    target_sources(latte_util
-      PRIVATE
-        cudnn.cc
-    )
-  endif()
 endif()
 
 target_include_directories(latte_util PRIVATE ${Latte_INCLUDE_DIRS})
